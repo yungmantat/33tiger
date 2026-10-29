@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【CRE能力傾向測試】圖形邏輯與數理推理五大通關公式 | 33 Tiger 秘笈專頁</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#0a0d0e',
+                            card: 'rgba(12, 22, 18, 0.85)',
+                            green: '#00ff66',
+                            dimGreen: '#00aa44',
+                            neonYellow: '#ccff00',
+                            border: '#1b3a2b'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Courier New', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #060908;
+            color: #d0f0dd;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 102, 0.08) 0%, transparent 60%),
+                linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        .neon-border {
+            border: 1px solid #00ff66;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3), inset 0 0 10px rgba(0, 255, 102, 0.1);
+        }
+
+        .neon-text-green {
+            color: #00ff66;
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+        }
+
+        .neon-text-yellow {
+            color: #ccff00;
+            text-shadow: 0 0 8px rgba(204, 255, 0, 0.5);
+        }
+
+        .cyber-header {
+            background: linear-gradient(90deg, rgba(0,255,102,0.15), rgba(0,0,0,0.8), rgba(0,255,102,0.15));
+            border-bottom: 2px solid #00ff66;
+        }
+
+        /* Scanline Overlay effect */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.3));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
+    <div class="scanline"></div>
+
+    <!-- Top Banner & Header Navigation -->
+    <header class="cyber-header sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3 text-xl font-bold tracking-wider neon-text-green hover:opacity-80 transition">
+                <i class="fa-solid font-mono text-2xl text-emerald-400">33</i>
+                <span>TIGER <span class="text-xs tracking-normal text-emerald-400 font-mono px-2 py-0.5 border border-emerald-500 rounded">CRE 秘笈專頁</span></span>
+            </a>
+            
+            <a href="index.html" class="px-4 py-2 text-xs font-mono rounded bg-emerald-950 text-emerald-400 border border-emerald-500 hover:bg-emerald-500 hover:text-black transition flex items-center gap-2">
+                <i class="fa-solid fa-house"></i> 返回 33 Tiger 主頁
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow">
+        
+        <!-- Article Header -->
+        <article class="bg-cyber-card border border-cyber-border rounded-xl p-6 md:p-10 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+            <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-3 uppercase tracking-widest">
+                <span class="px-2.5 py-1 rounded bg-emerald-900/50 border border-emerald-500/30"><i class="fa-solid fa-graduation-cap mr-1"></i> 公務員考試秘笈</span>
+                <span>•</span>
+                <span>CRE & BLNST 專題</span>
+            </div>
+
+            <h1 class="text-2xl md:text-4xl font-extrabold text-white mb-6 leading-relaxed neon-text-green">
+                【CRE能力傾向測試】圖形邏輯與數理推理五大通關公式
+            </h1>
+
+            <div class="flex flex-wrap items-center gap-4 text-xs text-emerald-300/70 border-b border-emerald-900/60 pb-6 mb-8 font-mono">
+                <span><i class="fa-regular fa-clock mr-1"></i> 閱讀時間：約 5 分鐘</span>
+                <span><i class="fa-solid fa-bolt mr-1"></i> 應試技巧：秒殺答題法</span>
+                <span><i class="fa-solid fa-check-double mr-1"></i> 適用考試：CRE Aptitude Test / CA ACO 筆試</span>
+            </div>
+
+            <!-- Intro Highlight Box -->
+            <div class="p-4 md:p-6 mb-8 bg-black/60 border-l-4 border-emerald-500 rounded-r-lg text-emerald-200 leading-relaxed text-sm md:text-base">
+                <p class="font-semibold text-white mb-2"><i class="fa-solid fa-circle-exclamation text-emerald-400 mr-2"></i>前言：</p>
+                公務員綜合招聘考試 (CRE) 的 Aptitude Test 往往是考生最大的難關。由於限時極緊（平均每題只有約 1 分鐘作答時間），單靠盲目計算極易超時。本章為你拆解數理數列、圖形旋轉規律、邏輯條件推論 (Syllogism) 的三秒判斷法，助你掌握通關核心公式！
+            </div>
+
+            <!-- Article Sections -->
+            <div class="space-y-8 text-slate-200 leading-relaxed text-sm md:text-base">
+                
+                <!-- Formula 1 -->
+                <section class="border border-emerald-900/40 p-5 md:p-6 rounded-lg bg-black/30">
+                    <h2 class="text-lg md:text-xl font-bold text-emerald-300 mb-3 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center font-mono text-sm border border-emerald-500">1</span>
+                        數理數列題 (Number Series) 的三秒辨識法
+                    </h2>
+                    <p class="mb-4">面對一串數字（例：<code class="text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-mono">2, 5, 11, 23, 47, ?</code>），切勿慌亂投機，請按以下順序在心中進行 3 步排查：</p>
+                    
+                    <ul class="space-y-3 font-normal list-none pl-0">
+                        <li class="flex items-start gap-2 bg-emerald-950/30 p-3 rounded border border-emerald-900/30">
+                            <i class="fa-solid fa-arrow-trend-up text-emerald-400 mt-1"></i>
+                            <div>
+                                <strong class="text-emerald-300">第一步：看變化率</strong><br>
+                                如果數字急劇飆升（如幾何級數），直接測試 <strong>乘法與加減混合（如 $2 \times n + 1$）</strong>。
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-emerald-950/30 p-3 rounded border border-emerald-900/30">
+                            <i class="fa-solid fa-calculator text-emerald-400 mt-1"></i>
+                            <div>
+                                <strong class="text-emerald-300">第二步：做一次差（相減）</strong><br>
+                                若增長平緩，立刻計算相鄰兩數之差（5-2=3, 11-5=6, 23-11=12），多數會得出等差或等比規律。
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2 bg-emerald-950/30 p-3 rounded border border-emerald-900/30">
+                            <i class="fa-solid fa-diagram-project text-emerald-400 mt-1"></i>
+                            <div>
+                                <strong class="text-emerald-300">第三步：做二次差</strong><br>
+                                若一次差沒有規律，將一次差的結果再做一次減法（二階差），90% 的高階難題會在此破解。
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Formula 2 -->
+                <section class="border border-emerald-900/40 p-5 md:p-6 rounded-lg bg-black/30">
+                    <h2 class="text-lg md:text-xl font-bold text-emerald-300 mb-3 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center font-mono text-sm border border-emerald-500">2</span>
+                        圖形旋轉與重疊規律 (Spatial Reasoning)
+                    </h2>
+                    <p class="mb-3">圖形題最忌整體盲目想像旋轉，會造成視覺疲勞與誤判。</p>
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        <div class="p-4 bg-black/50 border border-emerald-900/50 rounded">
+                            <h3 class="font-bold text-emerald-400 mb-1"><i class="fa-solid fa-rotate-right mr-1"></i> 順時針/逆時針定點法</h3>
+                            <p class="text-xs text-slate-300">選定圖形中單一特徵（如黑點、缺口、箭頭），僅觀察該單點在 90°、180° 或 45° 遞進時的移動軌跡。</p>
+                        </div>
+                        <div class="p-4 bg-black/50 border border-emerald-900/50 rounded">
+                            <h3 class="font-bold text-emerald-400 mb-1"><i class="fa-solid fa-layer-group mr-1"></i> 加減疊加法則</h3>
+                            <p class="text-xs text-slate-300">包含「圖形疊加、去同存異、留同去異」三種基本運算。看到宮格重疊時，優先心算重疊區塊的顏色變換規律。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Formula 3 -->
+                <section class="border border-emerald-900/40 p-5 md:p-6 rounded-lg bg-black/30">
+                    <h2 class="text-lg md:text-xl font-bold text-emerald-300 mb-3 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center font-mono text-sm border border-emerald-500">3</span>
+                        邏輯條件推論 (Syllogism) 的溫氏圖速解
+                    </h2>
+                    <p class="mb-3">當遇到「所有 A 都是 B」、「有些 B 不是 C」這類三段論命題時：</p>
+                    <div class="p-4 bg-emerald-950/40 border border-emerald-500/40 rounded text-sm space-y-2">
+                        <p class="text-yellow-300 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 鐵律：切勿憑日常直覺思考！</p>
+                        <p>必須在腦海中或草稿紙上勾勒簡單的「集合圈（Venn Diagram）」。</p>
+                        <p class="text-xs text-emerald-300/90 font-mono">若選項使用了絕對詞（如「必定」、「絕對是」），而題幹僅給出「部分 / 有些」條件，該選項 99% 為錯誤干擾項。</p>
+                    </div>
+                </section>
+
+                <!-- Formula 4 & 5 -->
+                <section class="border border-emerald-900/40 p-5 md:p-6 rounded-lg bg-black/30">
+                    <h2 class="text-lg md:text-xl font-bold text-emerald-300 mb-3 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-full bg-emerald-900 text-emerald-400 flex items-center justify-center font-mono text-sm border border-emerald-500">4</span>
+                        文字推理與條件轉換 (Data Sufficiency)
+                    </h2>
+                    <p class="mb-3">CRE 的文字題目常佈滿邏輯陷阱（如「不等於」、「除非……否則」）。</p>
+                    <div class="p-3 bg-black/60 rounded border border-slate-700 font-mono text-xs text-emerald-400">
+                        破解公式：將否定句轉為肯定句。<br>
+                        看見「除非 A 發生，否則 B 不會發生」➔ 立刻轉化為條件：B 發生則 A 必已發生 (B ➔ A)。
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Navigation / Call To Action Footer -->
+            <div class="mt-12 pt-8 border-t border-emerald-900/60 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-xs font-mono text-emerald-400/80">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> 33 Tiger 33虎哥社企資訊 • 版權所有
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="px-5 py-2.5 rounded text-xs font-bold font-mono bg-emerald-500 text-black hover:bg-emerald-400 transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> 按此探索更多公務員 & CA/ACO 秘笈
+                    </a>
+                </div>
+            </div>
+
+        </article>
+
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="border-t border-emerald-950 bg-black/80 py-6 text-center text-xs font-mono text-emerald-500/60">
+        <div class="max-w-4xl mx-auto px-4">
+            33 Tiger Cyberpunk Social Info Platform © 2026 | CRE Aptitude Test Portal
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("33 Tiger CRE Article Page Loaded Successfully.");
+        });
+    </script>
+</body>
+</html>
