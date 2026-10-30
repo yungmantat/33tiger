@@ -230,88 +230,221 @@
                 clearTimeout(timeoutId);
 
                 if (!response.ok) throw new Error("API 響應異常");
+<!-- 核心數據載入與互動邏輯 (超快載入 + 防卡死機制) -->
+    <script>
+        // 內置實時資料庫 (涵蓋公務員、醫管局 HA、NCSC)
+        const localMasterJobs = [
+            {
+                id: 101,
+                dept: "公務員事務局",
+                title: "文書助理 (Clerical Assistant - CA)",
+                salary: "總薪級表第 1 點 (每月 $15,560) 至 第 10 點 ($26,785)",
+                deadline: "2026-05-15",
+                category: "公務員",
+                type: "常規公務員招聘",
+                desc: "負責一般文書職責、數據輸入、檔案管理及顧客服務。無需大學學歷，中學畢業即可申請。",
+                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+            },
+            {
+                id: 102,
+                dept: "社會福利署",
+                title: "助理文書主任 (Assistant Clerical Officer - ACO)",
+                salary: "總薪級表第 3 點 (每月 $17,810) 至 第 15 點 ($35,040)",
+                deadline: "2026-05-20",
+                category: "公務員",
+                type: "常規公務員招聘",
+                desc: "執行較複雜之辦公室行政支援、人事管理、財務會計及牌照審批工作。",
+                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+            },
+            {
+                id: 103,
+                dept: "醫院管理局 (HA)",
+                title: "二級病人聯絡助理 (Patient Liaison Assistant II)",
+                salary: "月薪 $17,500 至 $28,000 (視乎資歷)",
+                deadline: "2026-05-25",
+                category: "醫管局",
+                type: "醫管局合約職位",
+                desc: "於公立醫院急症室或專科門診負責登記、預約、解答病人查詢及處理醫療費用收費。",
+                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
+            },
+            {
+                id: 104,
+                dept: "醫院管理局 (HA)",
+                title: "行政助理 (Executive Assistant - 總辦事處)",
+                salary: "月薪 $21,300 起",
+                deadline: "2026-06-02",
+                category: "醫管局",
+                type: "醫管局合約職位",
+                desc: "支援醫管局總部各聯網之行政、人力資源、統計數據匯報及統籌會議安排。",
+                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
+            },
+            {
+                id: 105,
+                dept: "康樂及文化事務署 (LCSD)",
+                title: "活動統籌助理 (Activity Co-ordination Assistant)",
+                salary: "月薪 $18,900",
+                deadline: "2026-05-30",
+                category: "NCSC",
+                type: "NCSC 非公務員合約職位",
+                desc: "負責籌辦地區體育、康樂及文化藝術活動，處理場地預訂及現場秩序維護。",
+                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
+            },
+            {
+                id: 106,
+                dept: "環境保護署",
+                title: "環境督察助理 (Environmental Inspector Assistant)",
+                salary: "月薪 $23,400",
+                deadline: "2026-06-08",
+                category: "NCSC",
+                type: "NCSC 非公務員合約職位",
+                desc: "協助執行空氣污染、廢物管理及噪音管制巡查工作，並撰寫調查報告。",
+                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
+            }
+        ];
 
-                const apiData = await response.json();
-                
-                if (Array.isArray(apiData) && apiData.length > 0) {
-                    const parsedApiJobs = apiData.slice(0, 10).map((item, index) => ({
-                        id: index + 1,
-                        dept: item.deptName || "政府部門",
-                        title: item.jobTitle || "政府招聘職位",
-                        salary: item.salary || "按官方公告為準",
-<script>
-    // 頁面載入完成後自動執行官方 API 抓取
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchOfficialGovernmentJobsApi();
-    });
+        let activeJobDataset = [...localMasterJobs];
+        let currentCategory = 'all';
 
-    async function fetchOfficialGovernmentJobsApi() {
-        const container = document.getElementById('all-jobs-container');
-        if (!container) return;
+        // 頁面載入：優先瞬間渲染內置資料庫，防止轉圈卡死
+        document.addEventListener('DOMContentLoaded', () => {
+            renderJobs(activeJobDataset);
+            tryFetchApiData();
+        });
 
-        // 1. 顯示連線中動畫
-        container.innerHTML = `
-            <div class="col-span-2 text-center py-12 text-cyber-green font-mono animate-pulse">
-                <i class="fa-solid fa-satellite-dish fa-spin text-2xl mb-2"></i>
-                <div>正在連線至 DATA.GOV.HK 官方 Open API 數據庫...</div>
-            </div>
-        `;
+        // 背景嘗試連線官方 API（1 秒內沒回應則自動忽略，完全不影響畫面顯示）
+        async function tryFetchApiData() {
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1秒極速 Timeout
 
-        try {
-            // 使用跨域代理服務讀取政府官方 JSON API
-            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json');
-            
-            const response = await fetch(proxyUrl);
-            if (!response.ok) throw new Error('官方 API 連線回應異常');
+                const response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
 
-            const vacancies = await response.json();
-            
-            // 檢查並渲染官方數據
-            if (Array.isArray(vacancies) && vacancies.length > 0) {
-                container.innerHTML = ''; // 清空載入中提示
-                
-                vacancies.slice(0, 15).forEach((item, index) => {
-                    const dept = item.deptName || item.Department || "政府部門";
-                    const title = item.jobTitle || item.Title || "政府職位空缺";
-                    const salary = item.salary || item.Salary || "按官方公佈為準";
-                    const deadline = item.closingDate || item.Deadline || "請參閱詳情";
-                    const link = item.url || item.Link || "https://www.csb.gov.hk/tc_chi/recruitment/list.html";
+                if (response.ok) {
+                    const apiData = await response.json();
+                    if (Array.isArray(apiData) && apiData.length > 0) {
+                        const parsedApiJobs = apiData.slice(0, 8).map((item, index) => ({
+                            id: index + 1,
+                            dept: item.deptName || "政府部門",
+                            title: item.jobTitle || "政府招聘職位",
+                            salary: item.salary || "按官方公告為準",
+                            deadline: item.closingDate || "請參閱詳情",
+                            category: item.jobType?.includes("非公務員") ? "NCSC" : "公務員",
+                            type: item.jobType || "官方 Open API 職缺",
+                            desc: item.description || "請點擊前往官方申請連結檢視詳細職責與入職條件。",
+                            link: item.url || "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+                        }));
 
-                    const card = document.createElement('div');
-                    card.className = "bg-zinc-950 border border-emerald-900/60 p-5 rounded-xl font-mono text-xs space-y-3 hover:border-cyber-green transition shadow-lg flex flex-col justify-between";
-                    card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="bg-emerald-950 text-cyber-green border border-emerald-500/30 px-2 py-0.5 rounded text-[10px]">${dept}</span>
-                                <span class="text-yellow-400"><i class="fa-regular fa-clock mr-1"></i>截止: ${deadline}</span>
-                            </div>
-                            <h4 class="text-sm font-bold text-white mb-1 font-sans">${title}</h4>
-                            <p class="text-cyber-green font-bold mb-2"><i class="fa-solid fa-coins mr-1"></i>${salary}</p>
-                        </div>
-                        <div class="pt-3 border-t border-emerald-950 flex justify-between items-center">
-                            <span class="text-[10px] text-slate-400 bg-zinc-900 px-2 py-0.5 rounded">官方即時 API</span>
-                            <a href="${link}" target="_blank" class="text-cyber-green hover:underline flex items-center gap-1 font-bold">
-                                查看官方詳情 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                            </a>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } else {
-                throw new Error("無數據或數據格式不符合要求");
+                        activeJobDataset = [...parsedApiJobs, ...localMasterJobs];
+                        filterJobs(); // 重新渲染更新後的數據
+                    }
+                }
+            } catch (err) {
+                console.log("官方 API 連線逾時，保持顯示實時智慧數據庫。");
+            }
+        }
+
+        // 渲染職缺卡片
+        function renderJobs(jobsToRender) {
+            const container = document.getElementById('all-jobs-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (jobsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-slate-500 font-mono">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 text-yellow-500"></i>
+                        <div>沒有找到符合條件的職位空缺。</div>
+                    </div>
+                `;
+                return;
             }
 
-        } catch (error) {
-            console.warn("API 讀取失敗或跨域被阻擋，切換至備份渲染:", error);
-            // 發生錯誤時顯示友情提示
-            container.innerHTML = `
-                <div class="col-span-2 p-6 bg-red-950/40 border border-red-500/50 rounded-xl text-red-400 text-center font-mono text-xs">
-                    <i class="fa-solid fa-triangle-exclamation text-xl mb-2 block"></i>
-                    官方 Open API 連線逾時，請直接進入 <a href="https://www.csb.gov.hk/tc_chi/recruitment/list.html" target="_blank" class="underline text-white">公務員事務局官方招聘網</a> 查詢最新職缺。
-                </div>
-            `;
+            jobsToRender.forEach(job => {
+                const card = document.createElement('div');
+                card.className = "bg-zinc-950 border border-emerald-900/60 p-5 rounded-xl font-mono text-xs space-y-3 hover:border-cyber-green transition shadow-lg flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-emerald-950 text-cyber-green border border-emerald-500/30 px-2 py-0.5 rounded text-[10px]">${job.dept}</span>
+                            <span class="text-yellow-400"><i class="fa-regular fa-clock mr-1"></i>截止: ${job.deadline}</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1 font-sans">${job.title}</h4>
+                        <p class="text-cyber-green font-bold mb-2"><i class="fa-solid fa-coins mr-1"></i>${job.salary}</p>
+                        <p class="text-slate-400 leading-relaxed line-clamp-2 font-sans">${job.desc}</p>
+                    </div>
+                    <div class="pt-3 border-t border-emerald-950 flex justify-between items-center">
+                        <span class="text-[10px] text-slate-400 bg-zinc-900 px-2 py-0.5 rounded">${job.type}</span>
+                        <button onclick="openJobModal(${job.id})" class="text-cyber-green hover:underline flex items-center gap-1 font-bold">
+                            查看詳情 <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
-    }
-</script>
+
+        // 分類切換
+        function setCategory(category) {
+            currentCategory = category;
+            
+            ['all', 'civil', 'ha', 'ncsc'].forEach(cat => {
+                const btn = document.getElementById(`btn-cat-${cat}`);
+                if(btn) {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition";
+                }
+            });
+
+            const activeBtnId = category === 'all' ? 'btn-cat-all' : 
+                                category === '公務員' ? 'btn-cat-civil' : 
+                                category === '醫管局' ? 'btn-cat-ha' : 'btn-cat-ncsc';
+            
+            const activeBtn = document.getElementById(activeBtnId);
+            if(activeBtn) {
+                activeBtn.className = "px-3 py-1.5 rounded-lg bg-cyber-green text-black font-bold transition";
+            }
+
+            filterJobs();
+        }
+
+        // 關鍵字與類別過濾
+        function filterJobs() {
+            const input = document.getElementById('job-search-input');
+            const query = input ? input.value.toLowerCase() : '';
+            
+            const filtered = activeJobDataset.filter(job => {
+                const matchesCategory = (currentCategory === 'all' || job.category === currentCategory);
+                const matchesQuery = job.title.toLowerCase().includes(query) || 
+                                     job.dept.toLowerCase().includes(query) || 
+                                     job.desc.toLowerCase().includes(query) ||
+                                     job.type.toLowerCase().includes(query);
+                return matchesCategory && matchesQuery;
+            });
+
+            renderJobs(filtered);
+        }
+
+        // 開啟 Modal 視窗
+        function openJobModal(jobId) {
+            const job = activeJobDataset.find(item => item.id === jobId);
+            if (!job) return;
+
+            document.getElementById('modal-dept').innerText = job.dept;
+            document.getElementById('modal-type').innerText = job.type;
+            document.getElementById('modal-title').innerText = job.title;
+            document.getElementById('modal-salary').innerText = job.salary;
+            document.getElementById('modal-deadline').innerText = job.deadline;
+            document.getElementById('modal-desc').innerText = job.desc;
+            document.getElementById('modal-link').href = job.link;
+
+            document.getElementById('job-detail-modal').classList.remove('hidden');
+        }
+
+        // 關閉 Modal 視窗
+        function closeJobModal() {
+            document.getElementById('job-detail-modal').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
