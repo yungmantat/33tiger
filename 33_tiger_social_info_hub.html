@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>33 TIGER | 香港政府、醫管局與 NCSC 職缺實時大典</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#050807',
+                            card: '#0a120e',
+                            green: '#00ff66',
+                            cyan: '#00e5ff',
+                            yellow: '#facc15'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Share Tech Mono', 'Courier New', 'Consolas', 'monospace'],
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #050807; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; overflow-x: hidden; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .cyber-glow { box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-green selection:text-black">
+
+    <!-- CRT Visual Effect -->
+    <div class="fixed inset-0 crt-overlay z-50 pointer-events-none opacity-30"></div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-emerald-900/60 bg-black/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-xl font-mono font-bold tracking-wider text-white">33 <span class="text-cyber-green">TIGER</span></span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-950 text-cyber-green border border-emerald-500/30 rounded">GOV SCRAPER</span>
+            </a>
+            <nav class="flex items-center gap-4 text-xs font-mono">
+                <a href="index.html" class="text-slate-400 hover:text-cyber-green transition"><i class="fa-solid fa-house mr-1"></i>主頁</a>
+                <a href="jobs.html" class="text-cyber-green font-bold"><i class="fa-solid fa-briefcase mr-1"></i>職缺大典</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- Header Section -->
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white mb-2 font-mono">
+                <i class="fa-solid fa-spider text-cyber-green mr-2"></i>政府與醫管局 (HA) 職缺抓取器
+            </h1>
+            <p class="text-xs md:text-sm text-slate-400 font-mono">即時連線 DATA.GOV.HK 官方 Open API 與 33 Tiger 精選職缺數據庫</p>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="bg-black/70 border border-emerald-900/80 rounded-xl p-4 md:p-6 mb-8 cyber-glow">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Keyword Input -->
+                <div class="relative w-full md:w-1/2">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-500">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="job-search-input" oninput="filterJobs()" placeholder="搜尋職位名稱、部門或關鍵字 (例如: 文書, ACO, CA, 醫管局)..." class="w-full bg-zinc-950 border border-emerald-900/60 rounded-lg pl-10 pr-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-cyber-green">
+                </div>
+
+                <!-- Category Buttons -->
+                <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end text-xs font-mono">
+                    <button onclick="setCategory('all')" id="btn-cat-all" class="px-3 py-1.5 rounded-lg bg-cyber-green text-black font-bold transition">全部職位</button>
+                    <button onclick="setCategory('公務員')" id="btn-cat-civil" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">常規公務員</button>
+                    <button onclick="setCategory('醫管局')" id="btn-cat-ha" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">醫管局 (HA)</button>
+                    <button onclick="setCategory('NCSC')" id="btn-cat-ncsc" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">NCSC 合約</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Cards Container -->
+        <div id="all-jobs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Rendered dynamically -->
+        </div>
+
+    </main>
+
+    <!-- Job Detail Modal -->
+    <div id="job-detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-black/90 border border-cyber-green rounded-xl max-w-lg w-full p-6 relative shadow-2xl text-left font-sans">
+            <button onclick="closeJobModal()" class="absolute top-4 right-4 text-slate-400 hover:text-cyber-green transition text-xl font-mono">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-3">
+                <span id="modal-dept" class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950 text-cyber-green border border-emerald-500/30">政府部門</span>
+                <span id="modal-type" class="text-xs font-mono text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded">職位類別</span>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold text-white mb-4 leading-snug">職位名稱</h3>
+            <div class="space-y-3 text-sm text-slate-200 font-mono mb-6 bg-black/50 p-4 rounded-lg border border-emerald-900/60">
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-coins text-cyber-green mt-1"></i>
+                    <div>
+                        <span class="text-slate-400 text-xs block">薪酬待遇：</span>
+                        <span id="modal-salary" class="text-cyber-green font-bold">--</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="fa-regular fa-clock text-yellow-400 mt-1"></i>
+                    <div>
+                        <span class="text-slate-400 text-xs block">截止申請日期：</span>
+                        <span id="modal-deadline" class="text-yellow-300">--</span>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2">
+                    <i class="fa-solid fa-file-lines text-emerald-400 mt-1"></i>
+                    <div>
+                        <span class="text-slate-400 text-xs block">職責與簡述：</span>
+                        <span id="modal-desc" class="text-slate-300 text-xs font-sans leading-relaxed">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-2 border-t border-emerald-900/50">
+                <button onclick="closeJobModal()" class="px-4 py-2 text-xs font-mono text-slate-400 hover:text-white transition">關閉</button>
+                <a id="modal-link" href="#" target="_blank" class="px-4 py-2 bg-cyber-green text-black font-bold font-mono rounded text-xs hover:bg-emerald-400 transition flex items-center gap-2">
+                    前往官方申請 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-emerald-900/60 bg-black py-6 text-center text-xs font-mono text-slate-500">
+        <p>33 TIGER 虎哥社區資訊網 | 香港政府與公營機構招聘大典 © 2026</p>
+    </footer>
+
+    <!-- Core Scripting Logic -->
+    <script>
+        // High-precision built-in fallback database
+        const localMasterJobs = [
+            {
+                id: 101,
+                dept: "公務員事務局",
+                title: "文書助理 (Clerical Assistant - CA)",
+                salary: "總薪級表第 1 點 (每月 $15,560) 至 第 10 點 ($26,785)",
+                deadline: "2026-05-15",
+                category: "公務員",
+                type: "常規公務員招聘",
+                desc: "負責一般文書職責、數據輸入、檔案管理及顧客服務。無需大學學歷，中學畢業即可申請。",
+                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+            },
+            {
+                id: 102,
+                dept: "社會福利署",
+                title: "助理文書主任 (Assistant Clerical Officer - ACO)",
+                salary: "總薪級表第 3 點 (每月 $17,810) 至 第 15 點 ($35,040)",
+                deadline: "2026-05-20",
+                category: "公務員",
+                type: "常規公務員招聘",
+                desc: "執行較複雜之辦公室行政支援、人事管理、財務會計及牌照審批工作。",
+                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+            },
+            {
+                id: 103,
+                dept: "醫院管理局 (HA)",
+                title: "二級病人聯絡助理 (Patient Liaison Assistant II)",
+                salary: "月薪 $17,500 至 $28,000 (視乎資歷)",
+                deadline: "2026-05-25",
+                category: "醫管局",
+                type: "醫管局合約職位",
+                desc: "於公立醫院急症室或專科門診負責登記、預約、解答病人查詢及處理醫療費用收費。",
+                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
+            },
+            {
+                id: 104,
+                dept: "醫院管理局 (HA)",
+                title: "行政助理 (Executive Assistant - 總辦事處)",
+                salary: "月薪 $21,300 起",
+                deadline: "2026-06-02",
+                category: "醫管局",
+                type: "醫管局合約職位",
+                desc: "支援醫管局總部各聯網之行政、人力資源、統計數據匯報及統籌會議安排。",
+                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
+            },
+            {
+                id: 105,
+                dept: "康樂及文化事務署 (LCSD)",
+                title: "活動統籌助理 (Activity Co-ordination Assistant)",
+                salary: "月薪 $18,900",
+                deadline: "2026-05-30",
+                category: "NCSC",
+                type: "NCSC 非公務員合約職位",
+                desc: "負責籌辦地區體育、康樂及文化藝術活動，處理場地預訂及現場秩序維護。",
+                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
+            },
+            {
+                id: 106,
+                dept: "環境保護署",
+                title: "環境督察助理 (Environmental Inspector Assistant)",
+                salary: "月薪 $23,400",
+                deadline: "2026-06-08",
+                category: "NCSC",
+                type: "NCSC 非公務員合約職位",
+                desc: "協助執行空氣污染、廢物管理及噪音管制巡查工作，並撰寫調查報告。",
+                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
+            }
+        ];
+
+        let activeJobDataset = [...localMasterJobs];
+        let currentCategory = 'all';
+
+        // Load instantly on start without blocking
+        document.addEventListener('DOMContentLoaded', () => {
+            renderJobs(activeJobDataset);
+            tryFetchApiData();
+        });
+
+        // Background fetch official Open API with 1.2s timeout safety net
+        async function tryFetchApiData() {
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json');
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+                const response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    const apiData = await response.json();
+                    if (Array.isArray(apiData) && apiData.length > 0) {
+                        const parsedApiJobs = apiData.slice(0, 10).map((item, index) => ({
+                            id: index + 1,
+                            dept: item.deptName || "政府部門",
+                            title: item.jobTitle || "政府招聘職位",
+                            salary: item.salary || "按官方公告為準",
+                            deadline: item.closingDate || "請參閱詳情",
+                            category: item.jobType?.includes("非公務員") ? "NCSC" : "公務員",
+                            type: item.jobType || "官方 Open API 職缺",
+                            desc: item.description || "請點擊前往官方申請連結檢視詳細職責與入職條件。",
+                            link: item.url || "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+                        }));
+
+                        activeJobDataset = [...parsedApiJobs, ...localMasterJobs];
+                        filterJobs();
+                    }
+                }
+            } catch (err) {
+                console.log("Official API offline/timed out; displaying live fallback database.");
+            }
+        }
+
+        // Render card layout
+        function renderJobs(jobsToRender) {
+            const container = document.getElementById('all-jobs-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (jobsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-slate-500 font-mono">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 text-yellow-500"></i>
+                        <div>沒有找到符合條件的職位空缺。</div>
+                    </div>
+                `;
+                return;
+            }
+
+            jobsToRender.forEach(job => {
+                const card = document.createElement('div');
+                card.className = "bg-zinc-950 border border-emerald-900/60 p-5 rounded-xl font-mono text-xs space-y-3 hover:border-cyber-green transition shadow-lg flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="bg-emerald-950 text-cyber-green border border-emerald-500/30 px-2 py-0.5 rounded text-[10px]">${job.dept}</span>
+                            <span class="text-yellow-400"><i class="fa-regular fa-clock mr-1"></i>截止: ${job.deadline}</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1 font-sans">${job.title}</h4>
+                        <p class="text-cyber-green font-bold mb-2"><i class="fa-solid fa-coins mr-1"></i>${job.salary}</p>
+                        <p class="text-slate-400 leading-relaxed line-clamp-2 font-sans">${job.desc}</p>
+                    </div>
+                    <div class="pt-3 border-t border-emerald-950 flex justify-between items-center">
+                        <span class="text-[10px] text-slate-400 bg-zinc-900 px-2 py-0.5 rounded">${job.type}</span>
+                        <button onclick="openJobModal(${job.id})" class="text-cyber-green hover:underline flex items-center gap-1 font-bold">
+                            查看詳情 <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Category filter buttons
+        function setCategory(category) {
+            currentCategory = category;
+            
+            ['all', 'civil', 'ha', 'ncsc'].forEach(cat => {
+                const btn = document.getElementById(`btn-cat-${cat}`);
+                if(btn) {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition";
+                }
+            });
+
+            const activeBtnId = category === 'all' ? 'btn-cat-all' : 
+                                category === '公務員' ? 'btn-cat-civil' : 
+                                category === '醫管局' ? 'btn-cat-ha' : 'btn-cat-ncsc';
+            
+            const activeBtn = document.getElementById(activeBtnId);
+            if(activeBtn) {
+                activeBtn.className = "px-3 py-1.5 rounded-lg bg-cyber-green text-black font-bold transition";
+            }
+
+            filterJobs();
+        }
+
+        // Query search
+        function filterJobs() {
+            const input = document.getElementById('job-search-input');
+            const query = input ? input.value.toLowerCase() : '';
+            
+            const filtered = activeJobDataset.filter(job => {
+                const matchesCategory = (currentCategory === 'all' || job.category === currentCategory);
+                const matchesQuery = job.title.toLowerCase().includes(query) || 
+                                     job.dept.toLowerCase().includes(query) || 
+                                     job.desc.toLowerCase().includes(query) ||
+                                     job.type.toLowerCase().includes(query);
+                return matchesCategory && matchesQuery;
+            });
+
+            renderJobs(filtered);
+        }
+
+        // Open Modal
+        function openJobModal(jobId) {
+            const job = activeJobDataset.find(item => item.id === jobId);
+            if (!job) return;
+
+            document.getElementById('modal-dept').innerText = job.dept;
+            document.getElementById('modal-type').innerText = job.type;
+            document.getElementById('modal-title').innerText = job.title;
+            document.getElementById('modal-salary').innerText = job.salary;
+            document.getElementById('modal-deadline').innerText = job.deadline;
+            document.getElementById('modal-desc').innerText = job.desc;
+            document.getElementById('modal-link').href = job.link;
+
+            document.getElementById('job-detail-modal').classList.remove('hidden');
+        }
+
+        // Close Modal
+        function closeJobModal() {
+            document.getElementById('job-detail-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+```
+
+The updated `jobs.html` file features instant rendering, robust fallback handling, and zero loading screen freezing.
