@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>33 TIGER | 全港公務員、醫管局與 NCSC 職缺大典</title>
+    <title>33 TIGER | 香港政府、醫管局與 NCSC 職缺實時大典</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,7 +12,17 @@
             theme: {
                 extend: {
                     colors: {
-                        cyber: { green: '#00ff66', cyan: '#00e5ff' }
+                        cyber: {
+                            black: '#050807',
+                            card: '#0a120e',
+                            green: '#00ff66',
+                            cyan: '#00e5ff',
+                            yellow: '#facc15'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Share Tech Mono', 'Courier New', 'Consolas', 'monospace'],
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif']
                     }
                 }
             }
@@ -21,73 +31,87 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #050b08; color: #e2e8f0; }
+        body { background-color: #050807; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; overflow-x: hidden; }
         .font-mono { font-family: 'Share Tech Mono', monospace; }
-        .cyber-glow { box-shadow: 0 0 15px rgba(0, 255, 102, 0.15); }
+        .cyber-glow { box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-green selection:text-black">
 
-    <!-- 頂部導覽列 -->
+    <!-- CRT Visual Effect -->
+    <div class="fixed inset-0 crt-overlay z-50 pointer-events-none opacity-30"></div>
+
+    <!-- Header Navigation -->
     <header class="border-b border-emerald-900/60 bg-black/80 backdrop-blur sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-2">
                 <span class="text-xl font-mono font-bold tracking-wider text-white">33 <span class="text-cyber-green">TIGER</span></span>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-950 text-cyber-green border border-emerald-500/30 rounded">職缺大典</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-950 text-cyber-green border border-emerald-500/30 rounded">GOV OPEN API</span>
             </a>
             <nav class="flex items-center gap-4 text-xs font-mono">
                 <a href="index.html" class="text-slate-400 hover:text-cyber-green transition"><i class="fa-solid fa-house mr-1"></i>主頁</a>
-                <a href="jobs.xml" target="_blank" class="text-yellow-400 hover:underline"><i class="fa-solid fa-rss mr-1"></i>RSS 訂閱</a>
+                <a href="jobs.html" class="text-cyber-green font-bold"><i class="fa-solid fa-briefcase mr-1"></i>職缺大典</a>
             </nav>
         </div>
     </header>
 
-    <!-- 主體內容區 -->
+    <!-- Main Content Area -->
     <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
         
-        <!-- 頁面標題 -->
+        <!-- Header Section -->
         <div class="mb-8 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-white mb-2 font-mono">
-                <i class="fa-solid fa-terminal text-cyber-green mr-2"></i>政府、醫管局與 NCSC 職缺總庫
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white mb-2 font-mono">
+                <i class="fa-solid fa-satellite-dish text-cyber-green mr-2"></i>政府官方職缺 API 實時大典
             </h1>
-            <p class="text-xs md:text-sm text-slate-400 font-mono">串接 DATA.GOV.HK 官方 Open API 與 33 Tiger 實時資料庫</p>
+            <p class="text-xs md:text-sm text-slate-400 font-mono">直連官方 API：https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json</p>
         </div>
 
-        <!-- 搜尋與類別篩選控制器 -->
-        <div class="bg-black/60 border border-emerald-900/80 rounded-xl p-4 md:p-6 mb-8 cyber-glow">
+        <!-- Filter & Search Controls -->
+        <div class="bg-black/70 border border-emerald-900/80 rounded-xl p-4 md:p-6 mb-8 cyber-glow space-y-4">
+            <!-- Manual Trigger Bar -->
+            <div class="flex flex-col sm:flex-row gap-3 items-center justify-between pb-4 border-b border-emerald-900/50">
+                <div class="flex items-center gap-2 text-xs font-mono text-slate-300 w-full sm:w-auto">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyber-green animate-ping"></span>
+                    <span>API 狀態：<span id="api-status" class="text-cyber-green font-bold">已讀取官方 API</span></span>
+                </div>
+                <button onclick="fetchOfficialGovernmentJson()" id="btn-reload-api" class="w-full sm:w-auto px-4 py-2 bg-cyber-green text-black font-bold font-mono rounded text-xs hover:bg-emerald-400 transition flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-rotate-right" id="reload-icon"></i> 重新連線官方 API
+                </button>
+            </div>
+
             <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <!-- 關鍵字搜尋 -->
+                <!-- Keyword Input -->
                 <div class="relative w-full md:w-1/2">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-500">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="job-search-input" oninput="filterJobs()" placeholder="搜尋職位名稱、部門或關鍵字 (例如: 文書, 醫管局, CA, ACO)..." class="w-full bg-zinc-950 border border-emerald-900/60 rounded-lg pl-10 pr-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-cyber-green">
+                    <input type="text" id="job-search-input" oninput="filterJobs()" placeholder="搜尋職位名稱、部門或關鍵字 (例如: 文書, 助理, 衛生署)..." class="w-full bg-zinc-950 border border-emerald-900/60 rounded-lg pl-10 pr-4 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-cyber-green">
                 </div>
 
-                <!-- 分類按鈕 -->
+                <!-- Category Buttons -->
                 <div class="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end text-xs font-mono">
                     <button onclick="setCategory('all')" id="btn-cat-all" class="px-3 py-1.5 rounded-lg bg-cyber-green text-black font-bold transition">全部職位</button>
                     <button onclick="setCategory('公務員')" id="btn-cat-civil" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">常規公務員</button>
-                    <button onclick="setCategory('醫管局')" id="btn-cat-ha" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">醫管局 (HA)</button>
-                    <button onclick="setCategory('NCSC')" id="btn-cat-ncsc" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">NCSC 合約</button>
+                    <button onclick="setCategory('非公務員')" id="btn-cat-ncsc" class="px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition">非公務員/合約</button>
                 </div>
             </div>
         </div>
 
-        <!-- 職缺卡片網格容器 -->
+        <!-- Grid Cards Container -->
         <div id="all-jobs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- 載入中指示器 -->
-            <div class="col-span-2 text-center py-12 text-cyber-green font-mono animate-pulse">
-                <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i>
-                <div>正在連線至 DATA.GOV.HK 官方 Open API 數據庫...</div>
-            </div>
+            <!-- Rendered dynamically -->
         </div>
 
     </main>
 
-    <!-- 職缺詳情彈出視窗 (Job Detail Modal) -->
+    <!-- Job Detail Modal -->
     <div id="job-detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-black/90 border border-cyber-green rounded-xl max-w-lg w-full p-6 relative shadow-2xl text-left font-sans">
             <button onclick="closeJobModal()" class="absolute top-4 right-4 text-slate-400 hover:text-cyber-green transition text-xl font-mono">
@@ -130,222 +154,119 @@
         </div>
     </div>
 
-    <!-- 頁尾 -->
+    <!-- Footer -->
     <footer class="border-t border-emerald-900/60 bg-black py-6 text-center text-xs font-mono text-slate-500">
-        <p>33 TIGER 虎哥社區資訊網 | 全港公務員與社會福利資訊共享平台</p>
-        <p class="mt-1">© 2026 All Rights Reserved.</p>
+        <p>33 TIGER 虎哥社區資訊網 | 香港政府與公營機構招聘大典 © 2026</p>
     </footer>
 
-    <!-- 核心數據載入與互動邏輯 -->
+    <!-- Core Scripting Logic -->
     <script>
-        // 內置實時備份數據庫 (涵蓋公務員、醫管局 HA、NCSC)
-        const localMasterJobs = [
-            {
-                id: 101,
-                dept: "公務員事務局",
-                title: "文書助理 (Clerical Assistant - CA)",
-                salary: "總薪級表第 1 點 (每月 $15,560) 至 第 10 點 ($26,785)",
-                deadline: "2026-05-15",
-                category: "公務員",
-                type: "常規公務員招聘",
-                desc: "負責一般文書職責、數據輸入、檔案管理及顧客服務。無需大學學歷，中學畢業即可申請。",
-                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
-            },
-            {
-                id: 102,
-                dept: "社會福利署",
-                title: "助理文書主任 (Assistant Clerical Officer - ACO)",
-                salary: "總薪級表第 3 點 (每月 $17,810) 至 第 15 點 ($35,040)",
-                deadline: "2026-05-20",
-                category: "公務員",
-                type: "常規公務員招聘",
-                desc: "執行較複雜之辦公室行政支援、人事管理、財務會計及牌照審批工作。",
-                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
-            },
-            {
-                id: 103,
-                dept: "醫院管理局 (HA)",
-                title: "二級病人聯絡助理 (Patient Liaison Assistant II)",
-                salary: "月薪 $17,500 至 $28,000 (視乎資歷)",
-                deadline: "2026-05-25",
-                category: "醫管局",
-                type: "醫管局合約職位",
-                desc: "於公立醫院急症室或專科門診負責登記、預約、解答病人查詢及處理醫療費用收費。",
-                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
-            },
-            {
-                id: 104,
-                dept: "醫院管理局 (HA)",
-                title: "行政助理 (Executive Assistant - 總辦事處)",
-                salary: "月薪 $21,300 起",
-                deadline: "2026-06-02",
-                category: "醫管局",
-                type: "醫管局合約職位",
-                desc: "支援醫管局總部各聯網之行政、人力資源、統計數據匯報及統籌會議安排。",
-                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
-            },
-            {
-                id: 105,
-                dept: "康樂及文化事務署 (LCSD)",
-                title: "活動統籌助理 (Activity Co-ordination Assistant)",
-                salary: "月薪 $18,900",
-                deadline: "2026-05-30",
-                category: "NCSC",
-                type: "NCSC 非公務員合約職位",
-                desc: "負責籌辦地區體育、康樂及文化藝術活動，處理場地預訂及現場秩序維護。",
-                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
-            },
-            {
-                id: 106,
-                dept: "環境保護署",
-                title: "環境督察助理 (Environmental Inspector Assistant)",
-                salary: "月薪 $23,400",
-                deadline: "2026-06-08",
-                category: "NCSC",
-                type: "NCSC 非公務員合約職位",
-                desc: "協助執行空氣污染、廢物管理及噪音管制巡查工作，並撰寫調查報告。",
-                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
-            }
-        ];
-
-        let activeJobDataset = [];
+        let officialJobsData = [];
         let currentCategory = 'all';
 
-        // 初始化載入
+        const TARGET_API_URL = 'https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json';
+
+        // Direct fetch from CSB Official API on page load
         document.addEventListener('DOMContentLoaded', () => {
-            loadJobsData();
+            fetchOfficialGovernmentJson();
         });
 
-        // 載入資料 (優先讀取官方 Open API，失敗時自動切換至智慧備份)
-        async function loadJobsData() {
+        async function fetchOfficialGovernmentJson() {
             const container = document.getElementById('all-jobs-container');
+            const statusText = document.getElementById('api-status');
+            const reloadBtn = document.getElementById('btn-reload-api');
+            const reloadIcon = document.getElementById('reload-icon');
+
+            if (!container) return;
+
+            if (reloadBtn) reloadBtn.disabled = true;
+            if (reloadIcon) reloadIcon.classList.add('fa-spin');
+
+            statusText.innerText = "連線中: csb.gov.hk/.../gov-job-vacancies-tc.json";
+            statusText.className = "text-yellow-400 font-bold animate-pulse";
+
+            container.innerHTML = `
+                <div class="col-span-2 text-center py-12 text-cyber-green font-mono animate-pulse">
+                    <i class="fa-solid fa-satellite-dish fa-spin text-2xl mb-2"></i>
+                    <div>正在安全連線至官方 API (gov-job-vacancies-tc.json)...</div>
+                </div>
+            `;
 
             try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json');
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2500);
+                // Using CORS proxy to bypass browser restriction when fetching official JSON
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(TARGET_API_URL);
 
-                const response = await fetch(proxyUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`HTTP 狀態碼: ${response.status}`);
 
-                if (!response.ok) throw new Error("API 響應異常");
-<!-- 核心數據載入與互動邏輯 (超快載入 + 防卡死機制) -->
-    <script>
-        // 內置實時資料庫 (涵蓋公務員、醫管局 HA、NCSC)
-        const localMasterJobs = [
-            {
-                id: 101,
-                dept: "公務員事務局",
-                title: "文書助理 (Clerical Assistant - CA)",
-                salary: "總薪級表第 1 點 (每月 $15,560) 至 第 10 點 ($26,785)",
-                deadline: "2026-05-15",
-                category: "公務員",
-                type: "常規公務員招聘",
-                desc: "負責一般文書職責、數據輸入、檔案管理及顧客服務。無需大學學歷，中學畢業即可申請。",
-                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
-            },
-            {
-                id: 102,
-                dept: "社會福利署",
-                title: "助理文書主任 (Assistant Clerical Officer - ACO)",
-                salary: "總薪級表第 3 點 (每月 $17,810) 至 第 15 點 ($35,040)",
-                deadline: "2026-05-20",
-                category: "公務員",
-                type: "常規公務員招聘",
-                desc: "執行較複雜之辦公室行政支援、人事管理、財務會計及牌照審批工作。",
-                link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
-            },
-            {
-                id: 103,
-                dept: "醫院管理局 (HA)",
-                title: "二級病人聯絡助理 (Patient Liaison Assistant II)",
-                salary: "月薪 $17,500 至 $28,000 (視乎資歷)",
-                deadline: "2026-05-25",
-                category: "醫管局",
-                type: "醫管局合約職位",
-                desc: "於公立醫院急症室或專科門診負責登記、預約、解答病人查詢及處理醫療費用收費。",
-                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
-            },
-            {
-                id: 104,
-                dept: "醫院管理局 (HA)",
-                title: "行政助理 (Executive Assistant - 總辦事處)",
-                salary: "月薪 $21,300 起",
-                deadline: "2026-06-02",
-                category: "醫管局",
-                type: "醫管局合約職位",
-                desc: "支援醫管局總部各聯網之行政、人力資源、統計數據匯報及統籌會議安排。",
-                link: "https://www.ha.org.hk/visitor/ha_visitor_index.asp?Content_ID=4&Lang=CHIB5"
-            },
-            {
-                id: 105,
-                dept: "康樂及文化事務署 (LCSD)",
-                title: "活動統籌助理 (Activity Co-ordination Assistant)",
-                salary: "月薪 $18,900",
-                deadline: "2026-05-30",
-                category: "NCSC",
-                type: "NCSC 非公務員合約職位",
-                desc: "負責籌辦地區體育、康樂及文化藝術活動，處理場地預訂及現場秩序維護。",
-                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
-            },
-            {
-                id: 106,
-                dept: "環境保護署",
-                title: "環境督察助理 (Environmental Inspector Assistant)",
-                salary: "月薪 $23,400",
-                deadline: "2026-06-08",
-                category: "NCSC",
-                type: "NCSC 非公務員合約職位",
-                desc: "協助執行空氣污染、廢物管理及噪音管制巡查工作，並撰寫調查報告。",
-                link: "https://www.csb.gov.hk/tc_chi/recruitment/list.html"
-            }
-        ];
+                const vacancies = await response.json();
 
-        let activeJobDataset = [...localMasterJobs];
-        let currentCategory = 'all';
+                if (Array.isArray(vacancies) && vacancies.length > 0) {
+                    officialJobsData = vacancies.map((item, index) => {
+                        const jobTypeStr = item.jobType || item.JobType || "";
+                        let cat = "公務員";
+                        if (jobTypeStr.includes("非公務員") || jobTypeStr.includes("NCSC") || jobTypeStr.includes("合約")) {
+                            cat = "非公務員";
+                        }
 
-        // 頁面載入：優先瞬間渲染內置資料庫，防止轉圈卡死
-        document.addEventListener('DOMContentLoaded', () => {
-            renderJobs(activeJobDataset);
-            tryFetchApiData();
-        });
-
-        // 背景嘗試連線官方 API（1 秒內沒回應則自動忽略，完全不影響畫面顯示）
-        async function tryFetchApiData() {
-            try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.csb.gov.hk/datagovhk/gov-vacancies/gov-job-vacancies-tc.json');
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 1000); // 1秒極速 Timeout
-
-                const response = await fetch(proxyUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
-
-                if (response.ok) {
-                    const apiData = await response.json();
-                    if (Array.isArray(apiData) && apiData.length > 0) {
-                        const parsedApiJobs = apiData.slice(0, 8).map((item, index) => ({
+                        return {
                             id: index + 1,
-                            dept: item.deptName || "政府部門",
-                            title: item.jobTitle || "政府招聘職位",
-                            salary: item.salary || "按官方公告為準",
-                            deadline: item.closingDate || "請參閱詳情",
-                            category: item.jobType?.includes("非公務員") ? "NCSC" : "公務員",
-                            type: item.jobType || "官方 Open API 職缺",
-                            desc: item.description || "請點擊前往官方申請連結檢視詳細職責與入職條件。",
-                            link: item.url || "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
-                        }));
+                            dept: item.deptName || item.Department || "政府部門",
+                            title: item.jobTitle || item.Title || "政府職位空缺",
+                            salary: item.salary || item.Salary || "按官方公告為準",
+                            deadline: item.closingDate || item.Deadline || "請參閱官方公告",
+                            category: cat,
+                            type: jobTypeStr || "官方 API 職缺",
+                            desc: item.description || item.Description || "請點擊前往官方網站檢視詳細職責、入職條件及申請手續。",
+                            link: item.url || item.Link || "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+                        };
+                    });
 
-                        activeJobDataset = [...parsedApiJobs, ...localMasterJobs];
-                        filterJobs(); // 重新渲染更新後的數據
-                    }
+                    statusText.innerText = `連線成功！共取得 ${officialJobsData.length} 筆官方最新職缺`;
+                    statusText.className = "text-cyber-green font-bold";
+                    filterJobs();
+                } else {
+                    throw new Error("官方 JSON 資料格式非陣列或為空");
                 }
-            } catch (err) {
-                console.log("官方 API 連線逾時，保持顯示實時智慧數據庫。");
+
+            } catch (error) {
+                console.error("連線官方 API 失敗:", error);
+                statusText.innerText = "官方 API 連線逾時或遭跨域攔截，載入備份數據";
+                statusText.className = "text-red-400 font-bold";
+
+                // Fallback database
+                officialJobsData = [
+                    {
+                        id: 1,
+                        dept: "公務員事務局",
+                        title: "文書助理 (Clerical Assistant - CA)",
+                        salary: "總薪級表第 1 點 (每月 $15,560) 至 第 10 點 ($26,785)",
+                        deadline: "常年招聘",
+                        category: "公務員",
+                        type: "公務員職位",
+                        desc: "負責一般文書職務、檔案管理、數據輸入及櫃檯服務。",
+                        link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+                    },
+                    {
+                        id: 2,
+                        dept: "社會福利署",
+                        title: "助理文書主任 (Assistant Clerical Officer - ACO)",
+                        salary: "總薪級表第 3 點 (每月 $17,810) 至 第 15 點 ($35,040)",
+                        deadline: "常年招聘",
+                        category: "公務員",
+                        type: "公務員職位",
+                        desc: "執行較複雜之辦公室行政支援、人事管理、財務會計及牌照審批工作。",
+                        link: "https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action"
+                    }
+                ];
+                filterJobs();
+            } finally {
+                if (reloadBtn) reloadBtn.disabled = false;
+                if (reloadIcon) reloadIcon.classList.remove('fa-spin');
             }
         }
 
-        // 渲染職缺卡片
+        // Render card layout
         function renderJobs(jobsToRender) {
             const container = document.getElementById('all-jobs-container');
             if (!container) return;
@@ -385,11 +306,11 @@
             });
         }
 
-        // 分類切換
+        // Category filter buttons
         function setCategory(category) {
             currentCategory = category;
             
-            ['all', 'civil', 'ha', 'ncsc'].forEach(cat => {
+            ['all', 'civil', 'ncsc'].forEach(cat => {
                 const btn = document.getElementById(`btn-cat-${cat}`);
                 if(btn) {
                     btn.className = "px-3 py-1.5 rounded-lg bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green transition";
@@ -397,8 +318,7 @@
             });
 
             const activeBtnId = category === 'all' ? 'btn-cat-all' : 
-                                category === '公務員' ? 'btn-cat-civil' : 
-                                category === '醫管局' ? 'btn-cat-ha' : 'btn-cat-ncsc';
+                                category === '公務員' ? 'btn-cat-civil' : 'btn-cat-ncsc';
             
             const activeBtn = document.getElementById(activeBtnId);
             if(activeBtn) {
@@ -408,12 +328,12 @@
             filterJobs();
         }
 
-        // 關鍵字與類別過濾
+        // Query search
         function filterJobs() {
             const input = document.getElementById('job-search-input');
             const query = input ? input.value.toLowerCase() : '';
             
-            const filtered = activeJobDataset.filter(job => {
+            const filtered = officialJobsData.filter(job => {
                 const matchesCategory = (currentCategory === 'all' || job.category === currentCategory);
                 const matchesQuery = job.title.toLowerCase().includes(query) || 
                                      job.dept.toLowerCase().includes(query) || 
@@ -425,9 +345,9 @@
             renderJobs(filtered);
         }
 
-        // 開啟 Modal 視窗
+        // Open Modal
         function openJobModal(jobId) {
-            const job = activeJobDataset.find(item => item.id === jobId);
+            const job = officialJobsData.find(item => item.id === jobId);
             if (!job) return;
 
             document.getElementById('modal-dept').innerText = job.dept;
@@ -441,7 +361,7 @@
             document.getElementById('job-detail-modal').classList.remove('hidden');
         }
 
-        // 關閉 Modal 視窗
+        // Close Modal
         function closeJobModal() {
             document.getElementById('job-detail-modal').classList.add('hidden');
         }
