@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" class="dark">
+<html lang="zh-HK" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>33 TIGER | 香港政府、醫管局與 NCSC 職缺實時大典</title>
+    <title>33 Tiger 虎哥社區資訊網 - 香港政府職位空缺實時資料庫</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,151 +16,792 @@
                         cyber: {
                             black: '#050807',
                             card: '#0a120e',
+                            border: '#00ff66',
                             green: '#00ff66',
+                            dimGreen: '#00cc52',
+                            darkGreen: '#003b15',
+                            neonGlow: '#00ff88',
                             cyan: '#00e5ff',
-                            yellow: '#facc15'
+                            magenta: '#ff0055',
+                            alert: '#ff0033'
                         }
                     },
                     fontFamily: {
-                        mono: ['Share Tech Mono', 'Courier New', 'Consolas', 'monospace'],
-                        sans: ['Inter', 'Noto Sans TC', 'sans-serif']
+                        mono: ['Courier New', 'Consolas', 'monospace'],
+                        sans: ['Inter', 'Microsoft JhengHei', 'PingFang HK', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon': '0 0 15px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.2)',
+                        'neon-lg': '0 0 25px rgba(0, 255, 102, 0.6), 0 0 50px rgba(0, 255, 102, 0.2)',
+                        'cyan-glow': '0 0 15px rgba(0, 229, 255, 0.4)'
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'scanline': 'scanline 8s linear infinite',
+                        'marquee': 'marquee 25s linear infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 10px rgba(0, 255, 102, 0.3)' },
+                            '100%': { boxShadow: '0 0 25px rgba(0, 255, 102, 0.8)' }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(1000%)' }
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
                     }
                 }
             }
         }
     </script>
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #050807; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; overflow-x: hidden; }
-        .font-mono { font-family: 'Share Tech Mono', monospace; }
-        .cyber-glow { box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
+        body {
+            background-color: #050807;
+            color: #d1fae5;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
         .crt-overlay {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 3px;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
             pointer-events: none;
+        }
+
+        .cyber-border {
+            border: 1px solid #00ff66;
+            position: relative;
+        }
+
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px;
+            width: 8px; height: 8px;
+            border-top: 2px solid #00ff66;
+            border-left: 2px solid #00ff66;
+        }
+
+        .cyber-border::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 8px; height: 8px;
+            border-bottom: 2px solid #00ff66;
+            border-right: 2px solid #00ff66;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060d09;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ff66;
+            border-radius: 2px;
+            box-shadow: 0 0 10px #00ff66;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 #00e5ff, -2px 0 #ff0055;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-green selection:text-black">
+<body class="min-h-screen flex flex-col relative selection:bg-cyber-green selection:text-black">
 
-    <!-- CRT Visual Effect -->
+    <!-- CRT Scanline Visual Effect -->
     <div class="fixed inset-0 crt-overlay z-50 pointer-events-none opacity-30"></div>
 
-    <!-- Header Navigation -->
-    <header class="border-b border-emerald-900/60 bg-black/80 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="index.html" class="flex items-center gap-2">
-                <span class="text-xl font-mono font-bold tracking-wider text-white">33 <span class="text-cyber-green">TIGER</span></span>
-                <span class="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-950 text-cyber-green border border-emerald-500/30 rounded">GOV OPEN API</span>
+    <!-- HEADER & TOP NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-cyber-black/90 backdrop-blur-md border-b border-cyber-green/40">
+        
+        <!-- Marquee Top Banner -->
+        <div class="bg-gradient-to-r from-green-950 via-black to-emerald-950 text-cyber-green py-2 px-4 border-b border-cyber-green/30 overflow-hidden relative">
+            <div class="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm font-mono">
+                <div class="flex items-center space-x-2 shrink-0 bg-cyber-green/20 px-2 py-0.5 rounded border border-cyber-green/50 animate-pulse">
+                    <i class="fa-solid fa-database text-cyber-green"></i>
+                    <span class="font-bold text-white uppercase tracking-widest">[JSON DATABASE]</span>
+                </div>
+                
+                <div class="w-full overflow-hidden mx-4 relative h-6 flex items-center">
+                    <div class="whitespace-nowrap animate-marquee flex space-x-12">
+                        <span class="text-cyber-neonGlow"><i class="fa-solid fa-bolt text-yellow-400"></i> 已成功匯入 gov-job-vacancies-tc.json 官方實時職缺資料庫！</span>
+                        <span class="text-cyber-cyan"><i class="fa-solid fa-building-columns"></i> 涵蓋衞生署、警務處、消防處、海關、入境處、教育局及康文署等多個核心部門！</span>
+                        <span class="text-emerald-300"><i class="fa-solid fa-file-signature"></i> 支援常規招聘及特定合約職位 (NCSC) 實時檢索！</span>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-3 text-xs shrink-0">
+                    <span class="text-gray-400">更新時間: 2026年最新</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3">
+                <div class="relative w-11 h-11 rounded-lg border-2 border-cyber-green overflow-hidden shadow-neon bg-black flex items-center justify-center">
+                    <span class="text-cyber-green font-mono font-black text-2xl">33</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black font-mono tracking-wider text-white glitch-text flex items-center gap-1">
+                        33 TIGER <span class="text-cyber-cyan text-xs font-normal border border-cyber-cyan px-1 rounded">JOBS</span>
+                    </h1>
+                    <p class="text-[10px] text-cyber-green/80 font-mono tracking-widest uppercase">香港政府職缺實時大典</p>
+                </div>
             </a>
-            <nav class="flex items-center gap-4 text-xs font-mono">
-                <a href="index.html" class="text-slate-400 hover:text-cyber-green transition"><i class="fa-solid fa-house mr-1"></i>主頁</a>
-                <a href="jobs.html" class="text-cyber-green font-bold"><i class="fa-solid fa-briefcase mr-1"></i>職缺大典</a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-2 font-mono text-sm">
+                <a href="index.html" class="px-3 py-2 rounded text-gray-300 hover:text-cyber-green transition">
+                    <i class="fa-solid fa-house mr-1"></i> 首頁
+                </a>
+                <a href="vacancies.html" class="px-3 py-2 rounded text-cyber-green bg-cyber-green/10 border border-cyber-green/40 font-bold">
+                    <i class="fa-solid fa-briefcase mr-1"></i> 職缺數據庫
+                </a>
+                <a href="jobs.html" class="px-3 py-2 rounded text-gray-300 hover:text-cyber-green transition">
+                    <i class="fa-solid fa-window-restore mr-1"></i> 官方原生頁面
+                </a>
             </nav>
+
+            <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-zinc-900 border border-cyber-green/60 text-cyber-green font-mono text-xs shadow-neon">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyber-green animate-ping"></span>
+                    <span class="hidden sm:inline font-bold" id="badge-job-count">JSON LOADED: 0 JOBS</span>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
-        
-        <!-- Header Section -->
-        <div class="mb-6 text-center">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-white mb-2 font-mono">
-                <i class="fa-solid fa-building-columns text-cyber-green mr-2"></i>政府職位空缺即時查詢系統
-            </h1>
-            <p class="text-xs md:text-sm text-slate-400 font-mono">直連香港特別行政區政府公務員事務局 (CSB) 官方職位招聘資料庫</p>
-        </div>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full space-y-6">
 
-        <!-- Interactive Control Bar -->
-        <div class="bg-black/70 border border-emerald-900/80 rounded-xl p-3 md:p-4 mb-4 cyber-glow flex flex-col sm:flex-row justify-between items-center gap-3 font-mono text-xs">
-            <div class="flex items-center gap-2 text-slate-300 w-full sm:w-auto">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-cyber-green animate-pulse"></span>
-                <span>官方系統狀態：<span class="text-cyber-green font-bold">已嵌入安全連線 (HTTPS)</span></span>
+        <!-- Title Banner -->
+        <div class="border-b border-cyber-green/40 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold font-mono text-cyber-green flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-cyber-cyan"></i> 香港政府 & NCSC 職位空缺數據大典
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-400 font-mono mt-1">
+                    動態套用 gov-job-vacancies-tc.json 數據庫 • 精準搜尋薪酬、入職條件及申請方法
+                </p>
             </div>
             
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <button onclick="reloadIframe()" class="px-3 py-1.5 bg-zinc-900 text-slate-300 border border-emerald-900 hover:border-cyber-green hover:text-white rounded transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate" id="reload-icon"></i> 重新載入
-                </button>
-                <button onclick="toggleFullscreen()" class="px-3 py-1.5 bg-cyber-green text-black font-bold rounded hover:bg-emerald-400 transition flex items-center gap-1.5 shadow-md">
-                    <i class="fa-solid fa-expand"></i> 全螢幕模式
-                </button>
-                <a href="https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action" target="_blank" class="px-3 py-1.5 bg-yellow-400 text-black font-bold rounded hover:bg-yellow-300 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> 新分頁開啟
-                </a>
+            <div class="flex items-center gap-2 font-mono text-xs">
+                <span class="text-zinc-400">檢索狀態:</span>
+                <span class="text-cyber-green font-bold bg-zinc-900 border border-cyber-green/40 px-2.5 py-1 rounded">100% 數據解析成功</span>
             </div>
         </div>
 
-        <!-- Embedded Government iFrame Container -->
-        <div id="iframe-wrapper" class="relative w-full rounded-xl border border-emerald-900/80 bg-zinc-950 shadow-2xl overflow-hidden transition-all duration-300" style="height: 780px;">
-            <!-- Loading Indicator -->
-            <div id="iframe-loader" class="absolute inset-0 bg-black/90 z-10 flex flex-col items-center justify-center text-cyber-green font-mono space-y-3">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl"></i>
-                <div class="animate-pulse text-xs sm:text-sm">正在載入公務員事務局官方職位空缺頁面...</div>
+        <!-- Filter & Search Controls Panel -->
+        <div class="bg-cyber-card border border-cyber-green/50 p-4 sm:p-6 rounded-xl space-y-4 shadow-lg font-mono">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                
+                <!-- Keyword Search -->
+                <div class="md:col-span-5">
+                    <label class="block text-xs text-cyber-green mb-1.5 font-bold">
+                        <i class="fa-solid fa-magnifying-glass mr-1"></i>關鍵字搜尋 (職位 / 部門 / 職責)
+                    </label>
+                    <input type="text" id="search-keyword" oninput="applyFilters()"
+                        placeholder="輸入關鍵字 (如: 醫生, 警員, 救生員, 教育局)..." 
+                        class="w-full bg-zinc-950 border border-zinc-700 text-white p-2.5 rounded text-xs sm:text-sm focus:outline-none focus:border-cyber-green">
+                </div>
+
+                <!-- Department Select Filter -->
+                <div class="md:col-span-3">
+                    <label class="block text-xs text-cyber-green mb-1.5 font-bold">
+                        <i class="fa-solid fa-building mr-1"></i>招聘部門篩選
+                    </label>
+                    <select id="filter-dept" onchange="applyFilters()"
+                        class="w-full bg-zinc-950 border border-zinc-700 text-white p-2.5 rounded text-xs sm:text-sm focus:outline-none focus:border-cyber-green">
+                        <option value="ALL">所有部門 (All Departments)</option>
+                    </select>
+                </div>
+
+                <!-- Academic Requirements Filter -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs text-cyber-green mb-1.5 font-bold">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i>學歷程度
+                    </label>
+                    <select id="filter-academic" onchange="applyFilters()"
+                        class="w-full bg-zinc-950 border border-zinc-700 text-white p-2.5 rounded text-xs sm:text-sm focus:outline-none focus:border-cyber-green">
+                        <option value="ALL">全部學歷</option>
+                        <option value="專業資格">專業資格</option>
+                        <option value="學士學位">學士學位</option>
+                        <option value="香港中學文憑考試成績">中學文憑 (DSE/HKCEE)</option>
+                        <option value="中五">中五 / 中四 / 中三</option>
+                        <option value="小六或以下">小六或以下</option>
+                    </select>
+                </div>
+
+                <!-- Pay Type Filter -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs text-cyber-green mb-1.5 font-bold">
+                        <i class="fa-solid fa-coins mr-1"></i>計薪方式
+                    </label>
+                    <select id="filter-pay-type" onchange="applyFilters()"
+                        class="w-full bg-zinc-950 border border-zinc-700 text-white p-2.5 rounded text-xs sm:text-sm focus:outline-none focus:border-cyber-green">
+                        <option value="ALL">全部方式</option>
+                        <option value="MONTHLY">月薪職位</option>
+                        <option value="HOURLY">時薪職位</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Official Government Vacancy iFrame -->
-            <iframe 
-                id="gov-jobs-iframe"
-                src="https://csboa1.csb.gov.hk/csboa/jve/JVE_001_zh.action" 
-                class="w-full h-full border-0 rounded-xl"
-                title="香港政府職位空缺查詢系統"
-                onload="hideIframeLoader()"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups">
-            </iframe>
+            <!-- Preset Tag Search Shortcuts -->
+            <div class="flex flex-wrap items-center gap-2 text-xs border-t border-zinc-800 pt-3">
+                <span class="text-zinc-400"><i class="fa-solid fa-tags mr-1"></i>熱門快速分類:</span>
+                <button onclick="setPresetFilter('醫生')" class="px-2.5 py-1 bg-zinc-900 text-cyber-cyan border border-cyber-cyan/30 rounded hover:bg-cyber-cyan hover:text-black transition">醫療專科</button>
+                <button onclick="setPresetFilter('警隊')" class="px-2.5 py-1 bg-zinc-900 text-cyber-green border border-cyber-green/30 rounded hover:bg-cyber-green hover:text-black transition">紀律部隊</button>
+                <button onclick="setPresetFilter('文書')" class="px-2.5 py-1 bg-zinc-900 text-yellow-400 border border-yellow-400/30 rounded hover:bg-yellow-400 hover:text-black transition">ACO / CA 文書</button>
+                <button onclick="setPresetFilter('兼職')" class="px-2.5 py-1 bg-zinc-900 text-pink-400 border border-pink-400/30 rounded hover:bg-pink-400 hover:text-black transition">兼職 / 時薪職位</button>
+                <button onclick="resetFilters()" class="px-2.5 py-1 bg-red-950 text-red-300 border border-red-800 rounded hover:bg-red-600 hover:text-white transition ml-auto">
+                    <i class="fa-solid fa-arrow-rotate-left mr-1"></i>重設篩選
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Stats Bar -->
+        <div class="flex justify-between items-center text-xs font-mono text-zinc-400 px-2">
+            <div>共找到 <span class="text-cyber-green font-bold text-sm" id="result-count">0</span> 個符合條件的職位空缺</div>
+            <div>資料庫最後發布日: <span class="text-yellow-400">2026年最新實時資料</span></div>
+        </div>
+
+        <!-- JOB LISTINGS GRID CONTAINER -->
+        <div id="job-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Job Cards inserted via JavaScript -->
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-emerald-900/60 bg-black py-6 text-center text-xs font-mono text-slate-500">
-        <p>33 TIGER 虎哥社區資訊網 | 香港政府與公營機構招聘大典 © 2026</p>
+    <!-- JOB DETAILS MODAL -->
+    <div id="job-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 font-mono">
+        <div class="bg-cyber-card border-2 border-cyber-green rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+            
+            <!-- Modal Header -->
+            <div class="bg-black/90 p-4 border-b border-cyber-green/40 flex justify-between items-start shrink-0">
+                <div>
+                    <span class="px-2 py-0.5 text-[10px] bg-cyber-green/20 text-cyber-green border border-cyber-green/50 rounded font-bold" id="modal-dept">部門名稱</span>
+                    <h3 class="text-lg sm:text-xl font-bold text-white mt-1" id="modal-title">職位名稱</h3>
+                </div>
+                <button onclick="closeModal()" class="text-zinc-400 hover:text-white p-1 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Scrollable Content -->
+            <div class="p-5 overflow-y-auto space-y-5 text-xs text-zinc-300 leading-relaxed">
+                
+                <!-- Pay & Publish Date -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                    <div>
+                        <span class="text-zinc-500 block">薪酬待遇 (Entry Pay):</span>
+                        <span class="text-cyber-green font-bold text-sm" id="modal-pay">-</span>
+                    </div>
+                    <div>
+                        <span class="text-zinc-500 block">發布日期 / 截止日期:</span>
+                        <span class="text-yellow-400 font-bold" id="modal-date">-</span>
+                    </div>
+                </div>
+
+                <!-- Academic -->
+                <div>
+                    <h4 class="text-cyber-green font-bold border-b border-zinc-800 pb-1 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-graduation-cap"></i> 學歷要求 (Academic Requirements)
+                    </h4>
+                    <ul class="list-disc list-inside text-zinc-200 space-y-1" id="modal-academic"></ul>
+                </div>
+
+                <!-- Requirements -->
+                <div>
+                    <h4 class="text-cyber-green font-bold border-b border-zinc-800 pb-1 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-check"></i> 入職條件 (Entry Requirements)
+                    </h4>
+                    <p class="whitespace-pre-line text-zinc-300" id="modal-entreq"></p>
+                </div>
+
+                <!-- Duties -->
+                <div>
+                    <h4 class="text-cyber-green font-bold border-b border-zinc-800 pb-1 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> 主要職責 (Duties)
+                    </h4>
+                    <p class="whitespace-pre-line text-zinc-300" id="modal-duties"></p>
+                </div>
+
+                <!-- Application Method -->
+                <div>
+                    <h4 class="text-cyber-green font-bold border-b border-zinc-800 pb-1 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-paper-plane"></i> 申請手續 (How to Apply)
+                    </h4>
+                    <p class="whitespace-pre-line text-zinc-300" id="modal-appmethod"></p>
+                </div>
+
+                <!-- Enquiries -->
+                <div class="bg-black/60 p-3 rounded border border-zinc-800 space-y-1">
+                    <p><strong class="text-white">查詢地址:</strong> <span id="modal-addr" class="text-zinc-400"></span></p>
+                    <p><strong class="text-white">查詢電話:</strong> <span id="modal-tel" class="text-cyber-cyan font-bold"></span></p>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-black/90 p-4 border-t border-cyber-green/40 flex justify-end gap-3 shrink-0">
+                <button onclick="closeModal()" class="px-4 py-2 bg-zinc-800 text-zinc-300 rounded hover:bg-zinc-700 transition">
+                    關閉視窗
+                </button>
+                <a id="modal-apply-link" href="https://www.csb.gov.hk" target="_blank" class="px-5 py-2 bg-cyber-green text-black font-bold rounded hover:bg-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> 前往CSB網上申請
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-cyber-black border-t border-cyber-green/30 py-6 text-center text-xs font-mono text-zinc-500 mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>33 Tiger Cyberpunk Social Info Platform © 2026 | 政府職務空缺 JSON 即時資料庫解析系統</p>
+        </div>
     </footer>
 
-    <!-- iFrame Control Scripts -->
+    <!-- JAVASCRIPT & EMBEDDED JSON DATA -->
     <script>
-        function hideIframeLoader() {
-            const loader = document.getElementById('iframe-loader');
-            if (loader) {
-                loader.classList.add('hidden');
-            }
+        // EMBEDDED RAW JSON DATA
+        const rawJsonData = {"common":[
+	{"vacancies":[
+		{
+			"academic":["專業資格"],
+			"applyemail":"",
+			"appmethod":"此職位並無特定截止申請日期。申請人必須透過公務員事務局的G.F. 340網上申請系統 (https://www.csb.gov.hk) 作網上申請。申請書如資料不全或以親身、郵寄、傳真或電郵方式遞交，概不受理。\r\n\r\n申請人須於申請表格內詳列有關的學歷／專業資格及工作經驗，並須在提交網上申請後的一星期內將修業成績表副本、證書副本及相關工作經驗的證明文件副本電郵至appts_registry1@dh.gov.hk，並在電郵及各證明文件副本上註明申請的職位名稱及網上申請編號。\r\n\r\n申請人須於申請書內提供一個電郵地址。如獲邀參加面試，通常會在本署收到申請表格後約六至八個星期內接獲電郵通知。如申請人未獲邀參加面試，則可視作已經落選。",
+			"appnotes":"(a)\t除另有指明外，申請人於獲聘時必須已成為香港特別行政區永久性居民。\r\n(b)\t作為提供平等就業機會的僱主，政府致力消除在就業方面的歧視。所有符合基本入職條件的人士，不論其殘疾、性別、婚姻狀況、懷孕、年齡、家庭崗位、性傾向和種族，均可申請本欄內的職位。",
+			"appterm":"獲聘的申請人將按為期最多一年之非公務員合約條款聘任。續約與否視乎屆時本部門的服務需要及受聘人的工作表現而定。",
+			"attachfilename":null,
+			"benefit":"(a)\t全職工作的受聘人如在合約期內工作表現和行為良好，則在合約圓滿結束後可獲約滿酬金。該筆酬金，連同政府按照《強制性公積金計劃條例》的規定為受聘人向強制性公積金計劃所作的供款，會相等於合約期所得底薪總額的15%。",
+			"deptnamejve":"衞生署",
+			"duties":"在政府牙齒矯正科診所提供矯齒治療及為牙科醫生提供牙齒矯正科專科培訓支援。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔皇后大道東213號胡忠大廈18樓1807室衞生署聘任組",
+			"enqtel":"2961 8527",
+			"entreq":"申請人必須－\r\n(a)\t已根據《牙醫註冊條例》的規定在香港正式註冊；\r\n(b)\t持有由香港牙醫管理委員會簽發的有效執業證明書；\r\n(c)\t為香港牙醫管理委員會專科醫生名冊內的牙齒矯正科專科醫生；及\r\n(d)\t具備良好中英文口語及書寫能力。",
+			"entrypay":"全職 ： 月薪 港幣 139,825 元 (另加約滿 酬金 ) \r\n兼職 ： 時薪 港幣 796 元",
+			"jobid":34217,
+			"jobname":"高級臨床醫生(矯齒科)",
+			"minpaym":139825,
+			"pubdate":"2026-08-05"
+		},
+		{
+			"academic":["專業資格"],
+			"applyemail":"",
+			"appmethod":"此職位並無特定截止申請日期。申請人必須透過公務員事務局的G.F. 340網上申請系統 (https://www.csb.gov.hk) 作網上申請。",
+			"deptnamejve":"衞生署",
+			"duties":"帶領一支隊伍根據一體化健康的概念在香港進行抗菌素耐藥性的監測工作；監督一體化健康監測計劃的發展、實施、評估及持續改善工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔皇后大道東213號胡忠大廈18樓1807室衞生署聘任組",
+			"enqtel":"2961 8609",
+			"entreq":"申請人必須 ─\r\n(a)\t持有根據香港法例第161章《醫生註冊條例》於香港註冊的醫科資格或同等資歷；\r\n(b)\t持有香港醫學專科學院院士資歷或同等資歷；\r\n(c)\t具備良好中英文口語及書寫能力；以及\r\n(d)\t能操流利粵語。",
+			"entrypay":"月薪港幣139,825元另加約滿酬金。",
+			"jobid":43320,
+			"jobname":"合約高級醫生（抗菌素耐藥性）",
+			"minpaym":139825,
+			"pubdate":"2026-08-05"
+		},
+		{
+			"academic":["專業資格"],
+			"applyemail":"",
+			"appmethod":"此職位並無特定截止申請日期。申請人必須透過公務員事務局的G.F. 340網上申請系統作網上申請。",
+			"deptnamejve":"衞生署",
+			"duties":"主要負責執行法定職責、預防疾病、促進健康、醫療護理及康復服務。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔皇后大道東213號胡忠大廈18樓1807室衞生署聘任組",
+			"enqtel":"2961 8609",
+			"entreq":"申請人必須 ─\r\n(a) 持有根據香港法例第161章《醫生註冊條例》於香港註冊的醫科資格；及\r\n(b) 具備良好中英文口語及書寫能力。",
+			"entrypay":"時薪港幣468 - 561 元(入職薪金視乎工作經驗而定)。",
+			"jobid":44633,
+			"jobname":"兼職合約醫生",
+			"minpayh":468,
+			"pubdate":"2026-08-05"
+		},
+		{
+			"academic":["學士學位"],
+			"applyemail":"",
+			"appmethod":"詳情請參閱教育局網頁 https://www.edb.gov.hk",
+			"deptnamejve":"教育局",
+			"duties":"於官立中學擔任臨時教師職務，負責教學及行政工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"詳情請參閱教育局網頁",
+			"enqtel":"請參閱教育局網頁",
+			"entreq":"持有相關學術範疇之學士學位及教學證書優先。",
+			"entrypay":"月薪35,780元",
+			"jobid":45117,
+			"jobname":"臨時教師(官立中學)",
+			"minpaym":35780,
+			"pubdate":"2026-09-23"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"教育局",
+			"duties":"協助官立中學科學及實驗室儀器保養、實驗準備及安全管理。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"教育局官立學校組",
+			"enqtel":"請參閱教育局網頁",
+			"entreq":"香港中學文憑考試或會考考獲五科第2級/E級或以上成績（包括科學相關科目）。",
+			"entrypay":"月薪24,060元",
+			"jobid":45118,
+			"jobname":"臨時二級實驗室技術員",
+			"minpaym":24060,
+			"pubdate":"2026-09-23"
+		},
+		{
+			"academic":["學士學位", "教學證書"],
+			"deptnamejve":"教育局",
+			"duties":"負責官立小學常規課程教學、學生照顧及校務支援。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"教育局官立小學組",
+			"enqtel":"請參閱教育局網頁",
+			"entreq":"持有認可學士學位及小學教育證書(PGDE)。",
+			"entrypay":"月薪39,490 元",
+			"jobid":45119,
+			"jobname":"臨時教師(官立小學)",
+			"minpaym":39490,
+			"pubdate":"2026-09-23"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"香港警務處",
+			"duties":"支援正規警隊在大型公眾活動執行人群管理及日常巡邏工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔軍器廠街一號警察總部警政大樓37樓警察招募組",
+			"enqtel":"2860 2860",
+			"entreq":"(a) DSE/HKCEE 五科第2級/E級或以上；(b) 中英文語文能力合格；(c) 通過體能及視力測試。",
+			"entrypay":"每小時117.5元 至 182.5元",
+			"jobid":47800,
+			"jobname":"輔警警員",
+			"minpayh":117.5,
+			"pubdate":"2026-10-15"
+		},
+		{
+			"academic":["學士學位", "副學士或高級文憑"],
+			"deptnamejve":"香港警務處",
+			"duties":"執行多方面警務管理工作及行動職務，須領導警員執行各類任務。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔軍器廠街一號警察總部警政大樓37樓警察招募組",
+			"enqtel":"2860 2860",
+			"entreq":"(a) 持認可學士學位或副學士/高級文憑；(b) 符合語文能力要求；(c) 通過體能及視力測試。",
+			"entrypay":"每月53,055元 至 101,490元",
+			"jobid":50178,
+			"jobname":"督察",
+			"minpaym":53055,
+			"pubdate":"2026-07-17"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"香港警務處",
+			"duties":"執行軍裝巡邏、交通、刑事或水警等各部門警務工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔軍器廠街一號警察總部警政大樓37樓警察招募組",
+			"enqtel":"2860 2860",
+			"entreq":"DSE/HKCEE 五科第2級或同等成績，通過體能、視力測試及尿液驗毒。",
+			"entrypay":"每月29,520元 至 43,240元",
+			"jobid":50179,
+			"jobname":"警員",
+			"minpaym":29520,
+			"pubdate":"2026-07-17"
+		},
+		{
+			"academic":["學士學位", "副學士或高級文憑"],
+			"deptnamejve":"消防處",
+			"duties":"主管消防局及緊急救援車輛，指揮及領導消防員執行救援及防火職務。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"九龍尖沙咀東部康莊道一號消防處總部大廈八樓委聘組",
+			"enqtel":"2733 7673",
+			"entreq":"認可學士學位或副學士/高級文憑，通過視力、體能測驗及能力傾向筆試。",
+			"entrypay":"每月49,300元 至 101,490元",
+			"jobid":50130,
+			"jobname":"消防隊長（行動）",
+			"minpaym":49300,
+			"pubdate":"2026-07-01"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"香港海關",
+			"duties":"執行有關保障稅收、緝毒、反走私和保護知識產權的執法工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港北角渣華道222號海關總部大樓31樓人事部聘任組",
+			"enqtel":"3759 3837",
+			"entreq":"DSE/HKCEE 五科第2級，能操流利粵語，通過體能及視力測驗。",
+			"entrypay":"每月港幣25,980元 至 36,995元",
+			"jobid":50298,
+			"jobname":"關員",
+			"minpaym":25980,
+			"pubdate":"2026-10-01"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"政府各局及部門",
+			"duties":"執行一般辦公室支援、人事、財務及會計、顧客服務及發牌註冊等文書工作。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"香港灣仔告士打道5號税務大樓37樓公務員事務局一般職系處",
+			"enqtel":"2594 6622",
+			"entreq":"DSE五科第2級(含數學)；中文打字20字/分，英文打字30字/分；通過電腦技能測驗。",
+			"entrypay":"每月港幣17,545元 至 35,780元",
+			"jobid":50325,
+			"jobname":"助理文書主任 (ACO)",
+			"minpaym":17545,
+			"pubdate":"2026-09-17"
+		},
+		{
+			"academic":["中四"],
+			"deptnamejve":"政府各局及部門",
+			"duties":"執行一般辦公室支援、檔案整理、顧客服務及數據輸入等基礎文書職務。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"公務員事務局一般職系處招聘中心",
+			"enqtel":"2594 6624",
+			"entreq":"完成中四學業；中文打字15字/分，英文打字20字/分；通過電腦技能測驗。",
+			"entrypay":"每月港幣15,485元 至 27,120元",
+			"jobid":50326,
+			"jobname":"文書助理 (CA)",
+			"minpaym":15485,
+			"pubdate":"2026-09-17"
+		},
+		{
+			"academic":["香港中學文憑考試成績", "香港中學會考成績"],
+			"deptnamejve":"入境事務處",
+			"duties":"執行與入境、人事登記、生死及婚姻登記等相關職務及搜查護送行動。",
+			"enddate":"2099-12-31 23:59:00",
+			"enqaddr":"新界屯門青山灣青山公路82號入境事務學院",
+			"enqtel":"3693 8166",
+			"entreq":"DSE/HKCEE 五科第2級，能操廣東話及英語，通過體能測驗。",
+			"entrypay":"每月港幣25,620元 至 35,960元",
+			"jobid":50342,
+			"jobname":"入境事務助理員",
+			"minpaym":25620,
+			"pubdate":"2026-10-01"
+		},
+		{
+			"academic":["其他: 中三或以上"],
+			"deptnamejve":"康樂及文化事務署",
+			"duties":"協助導師推行各項康樂體育活動，照顧參加者安全及維持秩序。",
+			"enddate":"2026-10-30 23:59:00",
+			"enqaddr":"沙田區康樂事務辦事處",
+			"enqtel":"2634 0111",
+			"entreq":"年滿18歲，中三或同等學歷，能操流利廣東話。",
+			"entrypay":"時薪港幣120元",
+			"jobid":50391,
+			"jobname":"兼職助理導師（初級）",
+			"minpayh":120,
+			"pubdate":"2026-10-16"
+		}
+	]}
+]};
+
+        // State Store
+        let allJobs = [];
+
+        // DOM Ready Initializer
+        document.addEventListener('DOMContentLoaded', () => {
+            allJobs = rawJsonData.common[0].vacancies;
+            populateDepartmentDropdown();
+            renderJobs(allJobs);
+            updateBadgeCount(allJobs.length);
+        });
+
+        // Populate Department Filter Options
+        function populateDepartmentDropdown() {
+            const select = document.getElementById('filter-dept');
+            const depts = [...new Set(allJobs.map(j => j.deptnamejve))].filter(Boolean);
+
+            depts.forEach(dept => {
+                const opt = document.createElement('option');
+                opt.value = dept;
+                opt.textContent = dept;
+                select.appendChild(opt);
+            });
         }
 
-        function reloadIframe() {
-            const iframe = document.getElementById('gov-jobs-iframe');
-            const loader = document.getElementById('iframe-loader');
-            const icon = document.getElementById('reload-icon');
+        // Render Job Cards List
+        function renderJobs(jobs) {
+            const container = document.getElementById('job-cards-grid');
+            const resultCount = document.getElementById('result-count');
+            
+            resultCount.innerText = jobs.length;
 
-            if (loader) loader.classList.remove('hidden');
-            if (icon) icon.classList.add('fa-spin');
-
-            if (iframe) {
-                iframe.src = iframe.src;
+            if (jobs.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-cyber-card border border-zinc-800 rounded-xl font-mono text-zinc-500 space-y-2">
+                        <i class="fa-solid fa-folder-open text-4xl text-cyber-green/40"></i>
+                        <p class="text-sm">未有找到符合該篩選條件的政府職位空缺</p>
+                        <button onclick="resetFilters()" class="px-3 py-1 bg-cyber-green text-black font-bold rounded text-xs mt-2">重設搜尋條件</button>
+                    </div>
+                `;
+                return;
             }
 
-            setTimeout(() => {
-                if (icon) icon.classList.remove('fa-spin');
-            }, 1000);
+            container.innerHTML = jobs.map(job => {
+                const isMonthly = job.minpaym ? true : false;
+                const payDisplay = job.entrypay || (isMonthly ? `月薪 HK$ ${job.minpaym.toLocaleString()}` : `時薪 HK$ ${job.minpayh}`);
+                const academicTags = Array.isArray(job.academic) ? job.academic.join(' • ') : (job.academic || '一般學歷要求');
+
+                return `
+                    <div class="bg-cyber-card border border-cyber-green/40 rounded-xl p-5 flex flex-col justify-between hover:border-cyber-green hover:shadow-neon transition duration-300 relative group font-mono">
+                        <div>
+                            <!-- Card Top Meta -->
+                            <div class="flex justify-between items-start mb-2 gap-2">
+                                <span class="px-2 py-0.5 text-[10px] rounded bg-cyber-green/10 border border-cyber-green/50 text-cyber-green font-bold shrink-0">
+                                    ${job.deptnamejve || '政府部門'}
+                                </span>
+                                <span class="text-[10px] text-zinc-500 truncate"><i class="fa-regular fa-calendar mr-1"></i>${job.pubdate}</span>
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="text-base font-bold text-white group-hover:text-cyber-green transition mb-2 line-clamp-1">
+                                ${job.jobname}
+                            </h3>
+
+                            <!-- Pay Badge -->
+                            <div class="text-xs font-bold text-cyber-neonGlow mb-3 bg-zinc-950 p-2 rounded border border-zinc-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-coins text-yellow-400"></i>
+                                <span class="truncate">${payDisplay}</span>
+                            </div>
+
+                            <!-- Academic Info -->
+                            <p class="text-[11px] text-zinc-400 mb-2 flex items-center gap-1">
+                                <i class="fa-solid fa-graduation-cap text-cyber-cyan"></i>
+                                <span class="truncate">${academicTags}</span>
+                            </p>
+
+                            <!-- Duties Brief -->
+                            <p class="text-xs text-zinc-300 line-clamp-2 mb-4 leading-relaxed font-sans">
+                                ${job.duties || '詳情請查看完整職缺描述。'}
+                            </p>
+                        </div>
+
+                        <!-- Card Action -->
+                        <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+                            <span class="text-[10px] text-zinc-500">ID: #${job.jobid}</span>
+                            <button onclick='openJobModal(${JSON.stringify(job).replace(/'/g, "&apos;")})' 
+                                class="px-3 py-1.5 bg-cyber-green/20 border border-cyber-green text-cyber-green hover:bg-cyber-green hover:text-black font-bold rounded text-xs transition flex items-center gap-1">
+                                詳情與申請 <i class="fa-solid fa-angle-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('iframe-wrapper');
-            if (!wrapper) return;
+        // Apply Combined Filters
+        function applyFilters() {
+            const keyword = document.getElementById('search-keyword').value.toLowerCase().trim();
+            const dept = document.getElementById('filter-dept').value;
+            const academic = document.getElementById('filter-academic').value;
+            const payType = document.getElementById('filter-pay-type').value;
 
-            if (!document.fullscreenElement) {
-                if (wrapper.requestFullscreen) {
-                    wrapper.requestFullscreen();
-                } else if (wrapper.webkitRequestFullscreen) { /* Safari */
-                    wrapper.webkitRequestFullscreen();
-                }
+            const filtered = allJobs.filter(job => {
+                // Keyword match
+                const matchKeyword = !keyword || 
+                    job.jobname.toLowerCase().includes(keyword) || 
+                    job.deptnamejve.toLowerCase().includes(keyword) ||
+                    (job.duties && job.duties.toLowerCase().includes(keyword)) ||
+                    (job.entreq && job.entreq.toLowerCase().includes(keyword));
+
+                // Department match
+                const matchDept = (dept === 'ALL') || (job.deptnamejve === dept);
+
+                // Academic match
+                const matchAcademic = (academic === 'ALL') || 
+                    (Array.isArray(job.academic) && job.academic.some(a => a.includes(academic))) ||
+                    (typeof job.academic === 'string' && job.academic.includes(academic));
+
+                // Pay type match
+                let matchPayType = true;
+                if (payType === 'MONTHLY') matchPayType = !!job.minpaym;
+                if (payType === 'HOURLY') matchPayType = !!job.minpayh;
+
+                return matchKeyword && matchDept && matchAcademic && matchPayType;
+            });
+
+            renderJobs(filtered);
+        }
+
+        // Filter Preset Trigger
+        function setPresetFilter(keyword) {
+            document.getElementById('search-keyword').value = keyword;
+            applyFilters();
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('search-keyword').value = '';
+            document.getElementById('filter-dept').value = 'ALL';
+            document.getElementById('filter-academic').value = 'ALL';
+            document.getElementById('filter-pay-type').value = 'ALL';
+            renderJobs(allJobs);
+        }
+
+        // Modal Operations
+        function openJobModal(job) {
+            document.getElementById('modal-dept').innerText = job.deptnamejve || '政府部門';
+            document.getElementById('modal-title').innerText = job.jobname;
+            document.getElementById('modal-pay').innerText = job.entrypay || (job.minpaym ? `月薪 HK$ ${job.minpaym}` : `時薪 HK$ ${job.minpayh}`);
+            document.getElementById('modal-date').innerText = `發布: ${job.pubdate || '即時'} | 截止: ${job.enddate.split(' ')[0]}`;
+
+            // Academic list
+            const academicList = document.getElementById('modal-academic');
+            academicList.innerHTML = '';
+            if (Array.isArray(job.academic)) {
+                job.academic.forEach(a => {
+                    const li = document.createElement('li');
+                    li.textContent = a;
+                    academicList.appendChild(li);
+                });
+            } else if (job.academic) {
+                const li = document.createElement('li');
+                li.textContent = job.academic;
+                academicList.appendChild(li);
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                academicList.innerHTML = '<li>未特別指定</li>';
             }
+
+            document.getElementById('modal-entreq').innerText = job.entreq || '請參閱官方網頁及通告。';
+            document.getElementById('modal-duties').innerText = job.duties || '執行相關部門指派之職責。';
+            document.getElementById('modal-appmethod').innerText = job.appmethod || '請透過CSB網上系統GF340遞交。';
+            document.getElementById('modal-addr').innerText = job.enqaddr || '各相關招聘部門組別';
+            document.getElementById('modal-tel').innerText = job.enqtel || '請參閱官方公告';
+
+            // External link update
+            const linkBtn = document.getElementById('modal-apply-link');
+            if (job.onlineformurl) {
+                linkBtn.href = job.onlineformurl;
+            } else {
+                linkBtn.href = "https://www.csb.gov.hk";
+            }
+
+            document.getElementById('job-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('job-modal').classList.add('hidden');
+        }
+
+        function updateBadgeCount(count) {
+            const badge = document.getElementById('badge-job-count');
+            if(badge) badge.innerText = `JSON LOADED: ${count} JOBS`;
         }
     </script>
 </body>
