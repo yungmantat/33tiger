@@ -896,6 +896,11 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             </div>
 
             <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1 font-mono text-sm">
+                <!-- Added Wiki Button -->
+                <a href="wiki.html" id="nav-wiki" class="nav-btn px-3 py-2 rounded hover:text-cyber-green hover:bg-cyber-green/10 transition text-gray-300">
+                    <i class="fa-solid fa-keyboard mr-1"></i> 維基百科
+                </a>
             <nav class="hidden lg:flex items-center space-x-1 font-mono text-sm">
                 <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-3 py-2 rounded text-gray-300">
                     <i class="fa-solid fa-house mr-1"></i> 首頁搜尋
@@ -911,11 +916,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                 </button>
                     <button onclick="switchTab('swd-welfare')" id="nav-swd-welfare" class="nav-btn px-3 py-2 rounded hover:text-cyber-green hover:bg-cyber-green/10 transition text-cyber-green bg-cyber-green/10 border border-cyber-green/40">
                     <i class="fa-solid fa-hands-holding-child mr-1"></i> 社署福利金資訊
-                </button>
-                   <button onclick="switchTab('wiki'); window.location.href='wiki.html';" id="nav-ca-aco" class="nav-btn px-3 py-2 rounded hover:text-cyber-green hover:bg-cyber-green/10 transition text-gray-300">
-    <i class="fa-solid fa-keyboard mr-1"></i> 維基百科
-</button>
-                <button onclick="switchTab('medical-waiver')" id="nav-medical-waiver" class="nav-btn px-3 py-2 rounded text-gray-300 hover:text-cyber-green hover:bg-cyber-green/10 transition">
+         <button onclick="switchTab('medical-waiver')" id="nav-medical-waiver" class="nav-btn px-3 py-2 rounded text-gray-300 hover:text-cyber-green hover:bg-cyber-green/10 transition">
                     <i class="fa-solid fa-calculator mr-1"></i> 醫療費用減免
                 </button>
                 <button onclick="switchTab('welfare-eligibility')" id="nav-welfare-eligibility" class="nav-btn px-3 py-2 rounded text-gray-300 hover:text-cyber-green hover:bg-cyber-green/10 transition">
