@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>維基百科 - 香港社會福利與津貼綜合資料庫 (Wiki Welfare HK 2026)</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#0a0d0e',
+                            card: '#0f1715',
+                            border: '#00ff66',
+                            green: '#00ff66',
+                            dimGreen: '#00cc52',
+                            darkGreen: '#003b15',
+                            neonGlow: '#00ff88',
+                            cyan: '#00e5ff',
+                            magenta: '#ff0055',
+                            alert: '#ff0033'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Courier New', 'Consolas', 'monospace'],
+                        sans: ['Inter', 'Microsoft JhengHei', 'PingFang HK', 'sans-serif'],
+                        serif: ['Georgia', 'Cambria', 'PMingLiU', 'serif']
+                    },
+                    boxShadow: {
+                        'neon': '0 0 15px rgba(0, 255, 102, 0.4), inset 0 0 15px rgba(0, 255, 102, 0.2)',
+                        'neon-lg': '0 0 25px rgba(0, 255, 102, 0.6), 0 0 50px rgba(0, 255, 102, 0.2)',
+                        'cyan-glow': '0 0 15px rgba(0, 229, 255, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome & Lucide Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Cyber Matrix & Wikipedia Hybrid Styling */
+        body {
+            background-color: #050807;
+            color: #d1fae5;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .crt-overlay {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .wiki-link {
+            color: #00e5ff;
+            text-decoration: underline;
+            text-decoration-color: rgba(0, 229, 255, 0.4);
+            transition: all 0.2s;
+        }
+        .wiki-link:hover {
+            color: #00ff66;
+            text-decoration-color: #00ff66;
+        }
+
+        .wiki-toc {
+            background-color: #0f1715;
+            border: 1px solid #00ff66;
+            border-left: 4px solid #00ff66;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
+        }
+
+        .wiki-infobox {
+            background-color: #0f1715;
+            border: 1px solid #00ff66;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
+        }
+        @media (min-width: 768px) {
+            .wiki-infobox {
+                width: 320px;
+                float: right;
+                margin-left: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .wiki-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .wiki-table th {
+            background-color: #002b11;
+            color: #00ff66;
+            border: 1px solid #00ff66;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+        .wiki-table td {
+            border: 1px solid #00ff66/40;
+            border: 1px solid rgba(0, 255, 102, 0.3);
+            padding: 8px 12px;
+            font-size: 0.875rem;
+        }
+        .wiki-table tr:nth-child(even) {
+            background-color: rgba(0, 255, 102, 0.05);
+        }
+
+        h2.wiki-heading {
+            border-bottom: 1px solid #00ff66;
+            padding-bottom: 0.4rem;
+            margin-top: 1.8rem;
+            margin-bottom: 1rem;
+            color: #00ff66;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Cyberpunk Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050807;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ff66;
+            border-radius: 2px;
+            box-shadow: 0 0 10px #00ff66;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 #00e5ff, -2px 0 #ff0055;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-cyber-green selection:text-black">
+
+    <!-- Global CRT Scanline Effect -->
+    <div class="fixed inset-0 crt-overlay z-50 pointer-events-none opacity-30"></div>
+
+    <!-- TOP HEADER / WIKIPEDIA BRANDING -->
+    <header class="sticky top-0 z-40 bg-cyber-black/90 backdrop-blur-md border-b border-cyber-green/40">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+            
+            <!-- Logo / Wiki Branding -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('main-wiki')">
+                <div class="w-10 h-10 rounded border-2 border-cyber-green bg-black flex items-center justify-center font-bold text-xl text-cyber-green shadow-neon font-mono">
+                    維
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold text-lg text-white font-mono tracking-wide glitch-text">維基百科 WIKIPEDIA</span>
+                        <span class="text-[10px] bg-cyber-green/20 text-cyber-green border border-cyber-green/50 px-1.5 py-0.5 rounded font-mono">自由的百科全書</span>
+                    </div>
+                    <p class="text-xs text-cyber-green/80 font-mono">香港社會福利、津貼與公共服務獨立專頁</p>
+                </div>
+            </div>
+
+            <!-- Search Bar inside Wiki -->
+            <div class="hidden md:flex items-center relative w-80">
+                <input type="text" id="wiki-search" placeholder="搜尋維基條目 (例: 長生津保險, 綜援, 生果金)..." onkeypress="if(event.key==='Enter') searchWiki()" class="w-full bg-zinc-950 border border-cyber-green/40 text-xs rounded-full py-1.5 pl-9 pr-4 text-white focus:outline-none focus:border-cyber-green focus:ring-1 focus:ring-cyber-green font-mono">
+                <i class="fa-solid fa-magnifying-glass text-cyber-green absolute left-3.5 text-xs"></i>
+            </div>
+
+            <!-- Global Action -->
+            <div class="flex items-center space-x-2">
+                <button onclick="switchPage('main-wiki')" class="px-3 py-1.5 rounded bg-cyber-green/10 border border-cyber-green/40 text-cyber-green text-xs font-mono hover:bg-cyber-green hover:text-black transition">
+                    <i class="fa-solid fa-house mr-1"></i>總覽條目
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- WIKI SUB-NAV TABS (INDEPENDENT PAGE SELECTOR) -->
+    <div class="bg-zinc-950 border-b border-cyber-green/30 px-4 py-2 overflow-x-auto sticky top-[57px] z-30 backdrop-blur">
+        <div class="max-w-7xl mx-auto flex items-center space-x-2 text-xs font-mono whitespace-nowrap">
+            <span class="text-cyber-green/70 mr-2"><i class="fa-solid fa-layer-group mr-1"></i>獨立維基條目頁面:</span>
+            <button onclick="switchPage('cssa')" id="btn-cssa" class="tab-btn px-3 py-1 rounded bg-cyber-green/20 border border-cyber-green text-cyber-green font-bold">1. 綜援計劃 (CSSA)</button>
+            <button onclick="switchPage('oaa')" id="btn-oaa" class="tab-btn px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-cyber-green">2. 高齡津貼 (生果金)</button>
+            <button onclick="switchPage('oala')" id="btn-oala" class="tab-btn px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-cyber-green">3. 長者生活津貼 (長生津/保險資產)</button>
+            <button onclick="switchPage('medical')" id="btn-medical" class="tab-btn px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-cyber-green">4. 醫療費用減免機制</button>
+            <button onclick="switchPage('cards')" id="btn-cards" class="tab-btn px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-cyber-green">5. 長者卡 / 樂悠卡專頁</button>
+            <button onclick="switchPage('housing')" id="btn-housing" class="tab-btn px-3 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-cyber-green">6. 公屋限額及強積金權益</button>
+        </div>
+    </div>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- ================= PAGE 0: MAIN WIKI OVERVIEW ================= -->
+        <article id="page-main-wiki" class="wiki-page space-y-6">
+            <div class="border-b border-cyber-green/40 pb-3 flex justify-between items-end">
+                <div>
+                    <span class="text-xs text-cyber-cyan font-mono">[維基百科 Wiki HK Portal 2026]</span>
+                    <h1 class="text-3xl font-extrabold font-serif text-white mt-1">香港社會福利與津貼綜合權益導引</h1>
+                    <p class="text-xs text-zinc-400 mt-1">Comprehensive Hong Kong Social Welfare &amp; Subsidy Encyclopedia</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono text-xs">
+                <div onclick="switchPage('cssa')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-cyber-green text-2xl font-bold"><i class="fa-solid fa-hands-holding-child"></i> 綜援計劃 (CSSA)</div>
+                    <p class="text-zinc-300">綜合社會保障援助計劃歷史、家庭資產審查機制、2026年最新標準金表格及租金特別補助。</p>
+                </div>
+
+                <div onclick="switchPage('oaa')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-yellow-400 text-2xl font-bold"><i class="fa-solid fa-apple-whole"></i> 高齡津貼 (生果金)</div>
+                    <p class="text-zinc-300">年滿70歲免資產及入息審查，每月$1,620。包含歷史演變與離港寬限期規定。</p>
+                </div>
+
+                <div onclick="switchPage('oala')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-cyber-cyan text-2xl font-bold"><i class="fa-solid fa-piggy-bank"></i> 長者生活津貼 (長生津)</div>
+                    <p class="text-zinc-300">65歲以上每月$4,195。詳細拆解儲蓄保險、年金本金豁免與退保現金價值計算方法。</p>
+                </div>
+
+                <div onclick="switchPage('medical')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-purple-400 text-2xl font-bold"><i class="fa-solid fa-hospital-user"></i> 醫療費用減免機制</div>
+                    <p class="text-zinc-300">公立醫院及衛生署診所費用100%全免與部分減免機制，醫務社會工作評估流程。</p>
+                </div>
+
+                <div onclick="switchPage('cards')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-pink-400 text-2xl font-bold"><i class="fa-solid fa-id-card font-bold"></i> 長者卡與樂悠卡</div>
+                    <p class="text-zinc-300">65歲長者卡商戶優惠 vs 60歲樂悠卡$2乘車優惠Scheme申請資格與八達通細節。</p>
+                </div>
+
+                <div onclick="switchPage('housing')" class="bg-cyber-card border border-cyber-green/50 p-5 rounded-xl hover:shadow-neon cursor-pointer transition space-y-2">
+                    <div class="text-emerald-400 text-2xl font-bold"><i class="fa-solid fa-building-user"></i> 公屋限額與強積金</div>
+                    <p class="text-zinc-300">2026/27年度1至4人公屋入息資產限額表格，強積金 (MPF) 累算權益豁免計算原則。</p>
+                </div>
+            </div>
+        </article>
+
+        <!-- ================= PAGE 1: 綜援 (CSSA) ================= -->
+        <article id="page-cssa" class="wiki-page space-y-6 hidden">
+            <!-- Main Title Banner -->
+            <div class="border-b border-cyber-green/40 pb-3 flex justify-between items-end">
+                <div>
+                    <span class="text-xs text-cyber-cyan font-mono">[維基條目 ID: CSSA-HK-2026]</span>
+                    <h1 class="text-3xl font-bold font-serif text-white mt-1">綜合社會保障援助計劃 (綜援)</h1>
+                    <p class="text-xs text-zinc-400 mt-1">Comprehensive Social Security Assistance Scheme (CSSA)</p>
+                </div>
+                <div class="text-right text-xs text-cyber-green font-mono">
+                    最後修訂：2026年2月1日
+                </div>
+            </div>
+
+            <!-- INFOBOX (WIKIPEDIA RIGHT SIDEBOX) -->
+            <aside class="wiki-infobox rounded-lg p-4 space-y-4">
+                <div class="bg-cyber-green/20 border border-cyber-green p-2 text-center rounded">
+                    <h3 class="font-bold text-white text-sm font-mono">綜合社會保障援助計劃</h3>
+                    <p class="text-[11px] text-cyber-green font-mono">CSSA Scheme</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb0?w=400&q=80" alt="社會福利" class="w-full h-36 object-cover rounded border border-cyber-green/40">
+                <div class="text-xs space-y-2 font-mono">
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">主管部門：</span>
+                        <span class="text-white">香港社會福利署 (SWD)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">創立年份：</span>
+                        <span class="text-white">1971年 (公共援助) / 1993年改名</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">援助性質：</span>
+                        <span class="text-yellow-400 font-bold">資產與入息審查型</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">受助對象：</span>
+                        <span class="text-white">經濟無法自給者/高齡/殘疾/失業</span>
+                    </div>
+                    <div class="flex justify-between pb-1">
+                        <span class="text-zinc-400">發放週期：</span>
+                        <span class="text-cyber-green font-bold">按月發放 (銀行自動轉帳)</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- TABLE OF CONTENTS (TOC) -->
+            <div class="wiki-toc p-4 rounded-md max-w-sm">
+                <div class="font-bold text-sm text-white mb-2 flex items-center justify-between font-mono">
+                    <span><i class="fa-solid fa-list text-cyber-green mr-2"></i>章節目錄 (TOC)</span>
+                </div>
+                <ul class="text-xs space-y-1 font-mono text-cyber-cyan">
+                    <li><a href="#cssa-history" class="hover:underline">1. 歷史沿革與演變 (History)</a></li>
+                    <li><a href="#cssa-eligibility" class="hover:underline">2. 申請資格與居港規定 (Eligibility)</a></li>
+                    <li><a href="#cssa-docs" class="hover:underline">3. 申請所需證明文件清單 (Documents Required)</a></li>
+                    <li><a href="#cssa-table" class="hover:underline">4. 綜援金額標準表格 (2026年最新)</a></li>
+                    <li><a href="#cssa-rent" class="hover:underline">5. 租金津貼與特別補助金 (Rent Allowance)</a></li>
+                </ul>
+            </div>
+
+            <!-- SECTION 1: HISTORY -->
+            <section id="cssa-history" class="space-y-3">
+                <h2 class="wiki-heading text-xl flex items-center gap-2">
+                    <span>1.</span> 歷史沿革與演變 (History)
+                </h2>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                    香港的社會救助制度最早可追溯至英治時期的基本慈善救濟。1971年，香港政府正式推出<strong class="text-white">「公共援助計劃」（Public Assistance Scheme）</strong>，為有需要的貧困家庭提供現金援助。1993年7月，政府將公共援助計劃正式改名為<strong class="text-cyber-green">「綜合社會保障援助計劃」（簡稱綜援，CSSA）</strong>，並納入更多特別補助金與長者/殘疾人士補助，成為香港社會安全網的核心支柱。
+                </p>
+                <div class="bg-zinc-950 border border-cyber-green/40 p-3 rounded text-xs text-zinc-400 italic font-mono">
+                    註：綜援制度的宗旨是為經濟上不能自給的人士提供安全網，使他們的收入達到一定水平，以應付生活上的基本需要。
+                </div>
+            </section>
+
+            <!-- SECTION 2: ELIGIBILITY -->
+            <section id="cssa-eligibility" class="space-y-3">
+                <h2 class="wiki-heading text-xl flex items-center gap-2">
+                    <span>2.</span> 申請資格與居港規定 (Eligibility)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                    <div class="bg-cyber-card p-4 rounded border border-cyber-green/40">
+                        <h4 class="font-bold text-cyber-cyan text-sm mb-2"><i class="fa-solid fa-passport mr-2"></i>居港條件規定</h4>
+                        <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                            <li>申請人必須是香港永久性居民，或已取得香港居留身份最少一年。</li>
+                            <li>申請前一年內，必須在香港居住最少308天（連續或累積）。</li>
+                            <li>18歲以下兒童可獲豁免居港一年規限。</li>
+                        </ul>
+                    </div>
+                    <div class="bg-cyber-card p-4 rounded border border-cyber-green/40">
+                        <h4 class="font-bold text-yellow-400 text-sm mb-2"><i class="fa-solid fa-coins mr-2"></i>經濟狀況審查</h4>
+                        <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                            <li>須以<strong class="text-white">「家庭為單位」</strong>共同提出申請（同住親屬）。</li>
+                            <li>家庭的總月收入與總資產值必須低於社署規定的限額。</li>
+                            <li>15-59歲身體健康而失業的受助人，須參加「自力更生支援計劃」。</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: DOCUMENTS REQUIRED -->
+            <section id="cssa-docs" class="space-y-3">
+                <h2 class="wiki-heading text-xl flex items-center gap-2">
+                    <span>3.</span> 申請所需證明文件清單 (Documents Required)
+                </h2>
+                <div class="bg-cyber-card p-4 rounded-lg border border-cyber-green/40 space-y-2 text-xs">
+                    <p class="text-zinc-300 mb-2 font-mono">申請綜援時，全家同住成員必須向社會保障辦事處提交以下證明文件：</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono">
+                        <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
+                            <span class="text-cyber-green font-bold">1. 身份證明文件</span>
+                            <p class="text-zinc-400 mt-1">香港身份證、出生證明書、單程證或護照正副本。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
+                            <span class="text-cyber-green font-bold">2. 入息證明文件</span>
+                            <p class="text-zinc-400 mt-1">最近6個月的糧單、僱主證明信、自僱收入記錄冊。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
+                            <span class="text-cyber-green font-bold">3. 資產證明文件</span>
+                            <p class="text-zinc-400 mt-1">所有銀行戶口存摺/結單(近1年)、股票賬戶、保險單。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
+                            <span class="text-cyber-green font-bold">4. 住址及租金證明</span>
+                            <p class="text-zinc-400 mt-1">租約、最新水電費單、租金收據。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
+                            <span class="text-cyber-green font-bold">5. 醫療證明文件</span>
+                            <p class="text-zinc-400 mt-1">公立醫院醫生簽發之健康狀況評估表 (如適用)。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: CSSA RATE TABLE -->
+            <section id="cssa-table" class="space-y-3">
+                <h2 class="wiki-heading text-xl flex items-center gap-2">
+                    <span>4.</span> 綜援金額標準表格 (2026年最新調整標準)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="wiki-table text-left font-mono">
+                        <thead>
+                            <tr>
+                                <th>受助人類別 (Category)</th>
+                                <th>單身人士標準金額 (每月)</th>
+                                <th>家庭成員標準金額 (每人每月)</th>
+                                <th>資產上限 (單身)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>健全成人 (59歲或以下)</td>
+                                <td>HK$ 2,920</td>
+                                <td>HK$ 2,510</td>
+                                <td>HK$ 35,000</td>
+                            </tr>
+                            <tr>
+                                <td>長者 (65歲或以上 / 健全)</td>
+                                <td>HK$ 4,195</td>
+                                <td>HK$ 3,960</td>
+                                <td>HK$ 53,500</td>
+                            </tr>
+                            <tr>
+                                <td>殘疾程度達 50% 者</td>
+                                <td>HK$ 4,195</td>
+                                <td>HK$ 3,755</td>
+                                <td>HK$ 53,500</td>
+                            </tr>
+                            <tr>
+                                <td>嚴重殘疾 / 需常人照顧者</td>
+                                <td>HK$ 5,340 ~ HK$ 7,165</td>
+                                <td>HK$ 4,775 ~ HK$ 6,505</td>
+                                <td>HK$ 53,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </article>
+
+
+        <!-- ================= PAGE 2: 高齡津貼 (OAA 生果金) ================= -->
+        <article id="page-oaa" class="wiki-page space-y-6 hidden">
+            <div class="border-b border-cyber-green/40 pb-3 flex justify-between items-end">
+                <div>
+                    <span class="text-xs text-yellow-400 font-mono">[維基條目 ID: OAA-HK-2026]</span>
+                    <h1 class="text-3xl font-bold font-serif text-white mt-1">高齡津貼 (俗稱「生果金」)</h1>
+                    <p class="text-xs text-zinc-400 mt-1">Old Age Allowance (OAA)</p>
+                </div>
+            </div>
+
+            <!-- INFOBOX -->
+            <aside class="wiki-infobox rounded-lg p-4 space-y-4">
+                <div class="bg-yellow-950/80 border border-yellow-500 p-2 text-center rounded">
+                    <h3 class="font-bold text-white text-sm font-mono">高齡津貼 (生果金)</h3>
+                    <p class="text-[11px] text-yellow-400 font-mono">Old Age Allowance</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1581579438747-1dc8d1e292c7?w=400&q=80" alt="長者生果金" class="w-full h-36 object-cover rounded border border-cyber-green/40">
+                <div class="text-xs space-y-2 font-mono">
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">年齡門檻：</span>
+                        <span class="text-yellow-400 font-bold">70 歲或以上</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">財務審查：</span>
+                        <span class="text-cyber-green font-bold">免資產及入息審查</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">2026最新金額：</span>
+                        <span class="text-white font-bold">HK$ 1,620 / 月</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- TOC -->
+            <div class="wiki-toc p-4 rounded-md max-w-sm">
+                <div class="font-bold text-sm text-white mb-2 flex items-center justify-between font-mono">
+                    <span><i class="fa-solid fa-list text-cyber-green mr-2"></i>章節目錄</span>
+                </div>
+                <ul class="text-xs space-y-1 font-mono text-cyber-cyan">
+                    <li><a href="#oaa-1" class="hover:underline">1. 歷史沿革與設立目的</a></li>
+                    <li><a href="#oaa-2" class="hover:underline">2. 申請資格與居港條件</a></li>
+                    <li><a href="#oaa-3" class="hover:underline">3. 廣東計劃與福建計劃 (跨境發放)</a></li>
+                </ul>
+            </div>
+
+            <!-- SECTION: DETAILS -->
+            <section id="oaa-1" class="space-y-4">
+                <h2 class="wiki-heading text-xl">1. 歷史沿革與設立目的</h2>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                    高齡津貼於 1973 年創立，俗稱「生果金」，旨向本港高齡長者表達敬意與關懷，補貼日常開支。早期分為普通高齡津貼與特別高齡津貼，自 2013 年起，70歲或以上的生果金正式實行全免資產審查。
+                </p>
+
+                <h2 id="oaa-2" class="wiki-heading text-xl">2. 申請資格與居港條件</h2>
+                <div class="bg-cyber-card p-4 rounded border border-cyber-green/40 text-xs font-mono space-y-2">
+                    <p class="text-yellow-400 font-bold">【資格三要素】</p>
+                    <ul class="list-disc list-inside space-y-1 text-zinc-300">
+                        <li>已年滿 70 歲。</li>
+                        <li>已成為香港永久性居民最少七年。</li>
+                        <li>申請前一年內居港最少 308 天。</li>
+                        <li><strong class="text-cyber-green">注意：無須申報任何資產、股票、銀行存款或保險。</strong></li>
+                    </ul>
+                </div>
+            </section>
+        </article>
+
+
+        <!-- ================= PAGE 3: 長者生活津貼 (OALA / 保險資產計算) ================= -->
+        <article id="page-oala" class="wiki-page space-y-6 hidden">
+            <div class="border-b border-cyber-green/40 pb-3 flex justify-between items-end">
+                <div>
+                    <span class="text-xs text-cyber-cyan font-mono">[維基條目 ID: OALA-INSURANCE-2026]</span>
+                    <h1 class="text-3xl font-bold font-serif text-white mt-1">長者生活津貼與保險/資產計算細則</h1>
+                    <p class="text-xs text-zinc-400 mt-1">Old Age Living Allowance (OALA) &amp; Asset Assessment Rules</p>
+                </div>
+            </div>
+
+            <!-- INFOBOX -->
+            <aside class="wiki-infobox rounded-lg p-4 space-y-4">
+                <div class="bg-cyber-cyan/20 border border-cyber-cyan p-2 text-center rounded">
+                    <h3 class="font-bold text-white text-sm font-mono">長者生活津貼</h3>
+                    <p class="text-[11px] text-cyber-cyan font-mono">OALA 2026</p>
+                </div>
+                <div class="text-xs space-y-2 font-mono">
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">每月津貼額：</span>
+                        <span class="text-cyber-green font-bold">HK$ 4,195</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">單身資產上限：</span>
+                        <span class="text-yellow-400 font-bold">HK$ 388,000</span>
+                    </div>
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-zinc-400">夫婦資產上限：</span>
+                        <span class="text-yellow-400 font-bold">HK$ 589,000</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- TOC -->
+            <div class="wiki-toc p-4 rounded-md max-w-sm">
+                <div class="font-bold text-sm text-white mb-2 flex items-center justify-between font-mono">
+                    <span><i class="fa-solid fa-list text-cyber-green mr-2"></i>章節目錄</span>
+                </div>
+                <ul class="text-xs space-y-1 font-mono text-cyber-cyan">
+                    <li><a href="#oala-ins" class="hover:underline">1. 保險計劃與長生津資產/入息計算方法 (重點)</a></li>
+                    <li><a href="#oala-limits" class="hover:underline">2. 長生津資產限制一覽</a></li>
+                </ul>
+            </div>
+
+            <!-- SECTION: INSURANCE & ASSETS CALCULATION -->
+            <section id="oala-ins" class="space-y-4">
+                <h2 class="wiki-heading text-xl text-cyber-cyan">1. 保險計劃與長生津資產/入息計算方法 (重點細則)</h2>
+                <div class="bg-cyber-card p-4 rounded-xl border border-cyber-cyan/50 space-y-4 text-xs font-mono">
+                    <p class="text-zinc-200">社會福利署在評估申請人（65歲或以上）的資產與入息時，對於保險單及年金有非常嚴格且明確的劃分：</p>
+                    
+                    <!-- Rule 1 -->
+                    <div class="bg-zinc-950 p-3 rounded border-l-4 border-cyber-green">
+                        <h4 class="font-bold text-cyber-green text-sm">【保險單項目 1】純人壽 / 醫療 / 意外保險（不計資產）</h4>
+                        <p class="text-zinc-400 mt-1">若保險不具備退保現金價值 (Cash Value)，純粹為保障性質，其保單價值<strong class="text-white">豁免計算為資產</strong>。</p>
+                    </div>
+
+                    <!-- Rule 2 -->
+                    <div class="bg-zinc-950 p-3 rounded border-l-4 border-yellow-400">
+                        <h4 class="font-bold text-yellow-400 text-sm">【保險單項目 2】儲蓄型保險 / 分紅保單（須計資產）</h4>
+                        <p class="text-zinc-400 mt-1">凡帶有儲蓄或投資成分的保單，其<strong class="text-yellow-400">「退保現金價值」(Surrender Value)</strong> 及已派發的積存紅利，必須全數併入資產審查上限中。</p>
+                    </div>
+
+                    <!-- Rule 3 -->
+                    <div class="bg-zinc-950 p-3 rounded border-l-4 border-cyber-cyan">
+                        <h4 class="font-bold text-cyber-cyan text-sm">【保險單項目 3】香港年金計劃 (HKMC Annuity / 延期年金)</h4>
+                        <ul class="list-disc list-inside text-zinc-300 mt-1 space-y-1">
+                            <li><strong class="text-white">本金豁免：</strong>投保香港年金計劃或認可延期年金之投保本金，<strong class="text-cyber-cyan">豁免計算資產</strong>。</li>
+                            <li><strong class="text-white">年金派息：</strong>每月定期領取的年金收入，必須申報為<strong class="text-yellow-400">「每月入息」</strong>（單身每月入息上限為 HK$10,580）。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2 id="oala-limits" class="wiki-heading text-xl">2. 長生津資產限制一覽</h2>
+                <table class="wiki-table text-left font-mono">
+                    <thead>
+                        <tr>
+                            <th>審查項目</th>
+                            <th>單身人士限額</th>
+                            <th>夫婦限額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>每月入息上限 (Income Cap)</td>
+                            <td>HK$ 10,580</td>
+                            <td>HK$ 16,080</td>
+                        </tr>
+                        <tr>
+                            <td>資產淨值上限 (Asset Cap)</td>
+                            <td>HK$ 388,000</td>
+                            <td>HK$ 589,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </article>
+
+
+        <!-- ================= PAGE 4: 醫療費用減免機制 ================= -->
+        <article id="page-medical" class="wiki-page space-y-6 hidden">
+            <div class="border-b border-cyber-green/40 pb-3">
+                <span class="text-xs text-purple-400 font-mono">[維基條目 ID: MEDICAL-WAIVER-2026]</span>
+                <h1 class="text-3xl font-bold font-serif text-white mt-1">公立醫院及診所醫療費用減免機制</h1>
+                <p class="text-xs text-zinc-400 mt-1">Medical Waiver System (Hospital Authority)</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-mono">
+                <div class="bg-cyber-card p-4 rounded-lg border border-purple-500/40 space-y-2">
+                    <h3 class="font-bold text-purple-400 text-sm">1. 綜援受助人全免</h3>
+                    <p class="text-zinc-300 leading-relaxed">
+                        持有有效綜援證明文件之受助人，於醫院管理局 (HA) 轄下急症室、專科門診、普通科門診及住院，費用獲 <strong class="text-cyber-green font-bold">100% 全數豁免</strong>。
+                    </p>
+                </div>
+                <div class="bg-cyber-card p-4 rounded-lg border border-purple-500/40 space-y-2">
+                    <h3 class="font-bold text-purple-400 text-sm">2. 低收入/經濟困難人士申請</h3>
+                    <p class="text-zinc-300 leading-relaxed">
+                        非綜援人士可向醫院「醫務社會工作部」(Medical Social Work Unit) 申請。社工將根據家庭月收入與中位數比較，以及家庭流動資產進行評估。
+                    </p>
+                </div>
+            </div>
+        </article>
+
+
+        <!-- ================= PAGE 5: 長者卡與樂悠卡 ================= -->
+        <article id="page-cards" class="wiki-page space-y-6 hidden">
+            <div class="border-b border-cyber-green/40 pb-3">
+                <span class="text-xs text-pink-400 font-mono">[維基條目 ID: SENIOR-CARDS-HK]</span>
+                <h1 class="text-3xl font-bold font-serif text-white mt-1">長者卡 (Senior Citizen Card) 與 樂悠卡 (JoyYou Card)</h1>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                <!-- Card 1 -->
+                <div class="bg-cyber-card p-5 rounded-xl border border-pink-500/40 space-y-3">
+                    <span class="bg-pink-950 text-pink-300 px-2 py-0.5 rounded text-[10px]">65歲或以上</span>
+                    <h3 class="text-lg font-bold text-white">長者卡 (Senior Citizen Card)</h3>
+                    <p class="text-zinc-300">由社會福利署發放，用作享有全港各商戶、景點、博物館及政府機構提供之優惠折扣。</p>
+                    <ul class="list-disc list-inside text-zinc-400 space-y-1">
+                        <li>申請條件：年滿 65 歲之香港居民。</li>
+                        <li>費用：首次申請全免。</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-cyber-card p-5 rounded-xl border border-cyber-cyan/40 space-y-3">
+                    <span class="bg-cyan-950 text-cyber-cyan px-2 py-0.5 rounded text-[10px]">60歲或以上</span>
+                    <h3 class="text-lg font-bold text-white">樂悠卡 (JoyYou Card - 八達通)</h3>
+                    <p class="text-zinc-300">專為 60 歲或以上香港居民設計的個人八達通，用以享用政府 <strong class="text-cyber-cyan">$2 乘車優惠方案</strong>。</p>
+                    <ul class="list-disc list-inside text-zinc-400 space-y-1">
+                        <li>涵蓋範圍：港鐵、專營巴士、綠色專線小巴、渡輪。</li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+
+
+        <!-- ================= PAGE 6: 公屋限額與強積金 ================= -->
+        <article id="page-housing" class="wiki-page space-y-6 hidden">
+            <div class="border-b border-cyber-green/40 pb-3">
+                <span class="text-xs text-cyber-green font-mono">[維基條目 ID: HOUSING-MPF-2026]</span>
+                <h1 class="text-3xl font-bold font-serif text-white mt-1">公屋入息及資產限額表格 (2026/27) &amp; 強積金累算權益</h1>
+            </div>
+
+            <!-- SECTION: HOUSING LIMITS -->
+            <section class="space-y-3">
+                <h2 class="wiki-heading text-xl">1. 公共房屋 (Public Housing) 申請限額</h2>
+                <table class="wiki-table text-left font-mono">
+                    <thead>
+                        <tr>
+                            <th>家庭人數 (Family Size)</th>
+                            <th>每月入息上限 (HKD)</th>
+                            <th>資產淨值限額 (HKD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 人 (單身)</td>
+                            <td>HK$ 12,940</td>
+                            <td>HK$ 286,000</td>
+                        </tr>
+                        <tr>
+                            <td>2 人家庭</td>
+                            <td>HK$ 19,730</td>
+                            <td>HK$ 388,000</td>
+                        </tr>
+                        <tr>
+                            <td>3 人家庭</td>
+                            <td>HK$ 24,740</td>
+                            <td>HK$ 505,000</td>
+                        </tr>
+                        <tr>
+                            <td>4 人家庭</td>
+                            <td>HK$ 30,950</td>
+                            <td>HK$ 590,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION: MPF ACCUMULATED RIGHTS -->
+            <section class="space-y-3">
+                <h2 class="wiki-heading text-xl">2. 強積金 (MPF) 累算退休權益與各項福利之關係</h2>
+                <div class="bg-cyber-card p-4 rounded-lg border border-cyber-green/40 text-xs font-mono space-y-2">
+                    <p class="text-cyber-green font-bold">💡 審查標準：</p>
+                    <p class="text-zinc-300 leading-relaxed">
+                        未到達法定退休年齡 (65歲) 且<strong class="text-white">尚未提取的強積金累算權益</strong>，在長者生活津貼、醫療減免及公屋申請中，<strong class="text-cyber-green font-bold">一般獲豁免計算為流動資產</strong>。惟若已辦理提早提取或已退職領出，有關現金即併入個人資產計算。
+                    </p>
+                </div>
+            </section>
+        </article>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-cyber-black border-t border-cyber-green/30 py-6 px-4 text-xs font-mono text-zinc-500 text-center">
+        <p>本維基百科專頁資訊僅供參考，最新數據請以香港社會福利署、醫院管理局及相關政府部門官方公告為準。</p>
+    </footer>
+
+    <!-- INTERACTION ENGINE -->
+    <script>
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.wiki-page').forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Show selected page
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if(targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Update Tab Styling
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green', 'font-bold');
+                btn.classList.add('bg-zinc-900', 'border-zinc-800', 'text-zinc-300');
+            });
+
+            const activeBtn = document.getElementById(`btn-${pageId}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green', 'font-bold');
+                activeBtn.classList.remove('bg-zinc-900', 'border-zinc-800', 'text-zinc-300');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function searchWiki() {
+            const val = document.getElementById('wiki-search').value.toLowerCase();
+            if(val.includes('保險') || val.includes('長生津')) {
+                switchPage('oala');
+            } else if(val.includes('綜援')) {
+                switchPage('cssa');
+            } else if(val.includes('生果')) {
+                switchPage('oaa');
+            } else if(val.includes('醫療')) {
+                switchPage('medical');
+            } else if(val.includes('卡')) {
+                switchPage('cards');
+            } else if(val.includes('公屋') || val.includes('強積金')) {
+                switchPage('housing');
+            } else {
+                alert('未找到精確匹配條目，已為你導向至綜援專頁。');
+                switchPage('cssa');
+            }
+        }
+    </script>
+</body>
+</html>
